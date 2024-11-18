@@ -68,6 +68,8 @@ jobs:
             echo "Stopping and removing existing container..."
             sudo docker stop fundboost
             sudo docker rm fundboost
+          else
+            echo "No existing container found. Skipping removal."
           fi
 
       # 4. 새 컨테이너 실행
