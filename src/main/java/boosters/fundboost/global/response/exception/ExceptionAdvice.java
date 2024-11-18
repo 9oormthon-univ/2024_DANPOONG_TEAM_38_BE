@@ -33,8 +33,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             WebRequest request) {
         BaseResponse<Object> body =
-                BaseResponse.onFailure(
-                        errorStatus.getCode(), errorStatus.getMessage(), errorMessage);
+                BaseResponse.onFailure(errorStatus, errorMessage);
         return super.handleExceptionInternal(
                 e, body, headers, errorStatus.getHttpStatus(), request);
     }
@@ -42,8 +41,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleExceptionInternal(
             Exception e, ErrorReasonDTO reason, HttpHeaders headers, HttpServletRequest request) {
 
-        BaseResponse<Object> body =
-                BaseResponse.onFailure(reason.getCode(), reason.getMessage(), null);
+        BaseResponse<Object> body = BaseResponse.onFailure(reason, null);
 
         WebRequest webRequest = new ServletWebRequest(request);
         return super.handleExceptionInternal(e, body, headers, reason.getHttpStatus(), webRequest);
@@ -64,14 +62,13 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                         .orElse("Validation error occurred");
 
         return handleExceptionInternalConstraint(
-                e, ErrorStatus.valueOf(errorMessage), HttpHeaders.EMPTY, request);
+                e, ErrorStatus.VALIDATION_ERROR, HttpHeaders.EMPTY, request, errorMessage);
     }
 
     private ResponseEntity<Object> handleExceptionInternalConstraint(
-            Exception e, ErrorStatus errorCommonStatus, HttpHeaders headers, WebRequest request) {
+            Exception e, ErrorStatus errorCommonStatus, HttpHeaders headers, WebRequest request, String errorMessage) {
         BaseResponse<Object> body =
-                BaseResponse.onFailure(
-                        errorCommonStatus.getCode(), errorCommonStatus.getMessage(), null);
+                BaseResponse.onFailure(errorCommonStatus, errorMessage);
         return super.handleExceptionInternal(
                 e, body, headers, errorCommonStatus.getHttpStatus(), request);
     }
@@ -101,10 +98,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleExceptionInternalArgs(
             Exception e, WebRequest request, Map<String, String> errorArgs) {
         BaseResponse<Object> body =
-                BaseResponse.onFailure(
-                        ErrorStatus._BAD_REQUEST.getCode(),
-                        ErrorStatus._BAD_REQUEST.getMessage(),
-                        errorArgs);
+                BaseResponse.onFailure(ErrorStatus._BAD_REQUEST, errorArgs);
         return super.handleExceptionInternal(
                 e, body, HttpHeaders.EMPTY, ErrorStatus._BAD_REQUEST.getHttpStatus(), request);
     }
