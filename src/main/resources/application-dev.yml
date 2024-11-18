@@ -4,10 +4,11 @@ spring:
       on-profile: dev
   redis:
     redis:
-      url: ${REDIS_URL}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:3306/dev_fb?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: ${DEV_DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
