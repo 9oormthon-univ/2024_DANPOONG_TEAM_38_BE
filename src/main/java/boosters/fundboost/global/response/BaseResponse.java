@@ -25,7 +25,7 @@ public class BaseResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
-    public static <T> BaseResponse<T> onSuccess(T data, SuccessStatus status) {
+    public static <T> BaseResponse<T> onSuccess(SuccessStatus status, T data) {
         return new BaseResponse<>(true, status.getCode(), status.getMessage(), data);
     }
 
