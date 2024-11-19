@@ -3,19 +3,41 @@ package boosters.fundboost.project.converter;
 import boosters.fundboost.global.utils.CalculatorUtil;
 import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.user.domain.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class ProjectConverter {
-    public static List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
+
+    public Project toEntity(ProjectBasicInfoRequest request, String imageUrl, User user) {
+        return Project.builder()
+                .mainTitle(request.getMainTitle())
+                .subTitle(request.getSubTitle())
+                .image(imageUrl)
+                .category(request.getCategory())
+                .region(request.getRegion())
+                .account(request.getAccount())
+                .budgetDescription(request.getBudgetDescription())
+                .scheduleDescription(request.getScheduleDescription())
+                .teamDescription(request.getTeamDescription())
+                .targetAmount(request.getTargetAmount())
+                .introduction(request.getIntroduction())
+                .user(user)
+                .build();
+    }
+
+    public List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
         return projects.stream()
-                .map(ProjectConverter::toNewProjectResponse)
+                .map(this::toNewProjectResponse)
                 .collect(Collectors.toList());
     }
 
-    private static NewProjectResponse toNewProjectResponse(Project project) {
+    private NewProjectResponse toNewProjectResponse(Project project) {
         double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
 
         return NewProjectResponse.builder()

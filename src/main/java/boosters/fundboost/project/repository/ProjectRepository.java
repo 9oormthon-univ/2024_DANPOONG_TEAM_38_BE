@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC LIMIT 3")
+
+    @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC")
     List<Project> findNewProjects();
 }
