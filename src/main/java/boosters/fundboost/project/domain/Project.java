@@ -2,6 +2,8 @@ package boosters.fundboost.project.domain;
 
 import boosters.fundboost.boost.domain.Boost;
 import boosters.fundboost.global.common.domain.BaseEntity;
+import boosters.fundboost.global.exception.ValidationException;
+import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
@@ -21,6 +23,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,4 +69,12 @@ public class Project extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    @PreUpdate
+    public void validateDates() {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new ValidationException(ErrorStatus.VALIDATION_ERROR);
+        }
+    }
 }
