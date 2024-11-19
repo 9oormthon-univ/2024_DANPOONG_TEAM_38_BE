@@ -67,7 +67,7 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                 .select(company, boost.amount.sum(), boost.count())
                 .from(boost)
                 .join(boost.company, company)
-                .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay())) // 기간에 맞는 조건
+                .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay()))
                 .groupBy(company.id)
                 .orderBy(numberExpression.desc())
                 .limit(LIMIT_SIZE)
@@ -80,8 +80,8 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                         tuple -> tuple.get(company),
                         tuple -> CompanyRankingRecord.from(
                                 tuple.get(company),
-                                Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),  // null 처리: null일 경우 0으로 대체
-                                Optional.ofNullable(tuple.get(boost.count())).orElse(0L)  // null 처리: null일 경우 0으로 대체
+                                Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),
+                                Optional.ofNullable(tuple.get(boost.count())).orElse(0L)
                         ),
                         (existing, replacement) -> existing,
                         LinkedHashMap::new
