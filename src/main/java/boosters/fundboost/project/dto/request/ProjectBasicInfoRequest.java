@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class ProjectBasicInfoRequest {
@@ -43,4 +45,10 @@ public class ProjectBasicInfoRequest {
 
     @NotNull(message = "이미지 파일은 필수 입력 항목입니다.")
     private MultipartFile image;
+
+    @NotNull(message = "시작 날짜는 필수 입력 항목입니다.")
+    private LocalDate startDate;
+
+    @NotNull(message = "종료 날짜는 필수 입력 항목입니다.")
+    private LocalDate endDate;
 }
