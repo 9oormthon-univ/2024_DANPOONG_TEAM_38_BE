@@ -33,6 +33,7 @@ public class User extends BaseEntity {
     private String link;
     private String title;
     private String content;
+    @Enumerated(EnumType.STRING)
     private Tag tag;
     @OneToOne(mappedBy = "user")
     private Company company;
