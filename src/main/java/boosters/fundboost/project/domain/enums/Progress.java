@@ -1,26 +1,17 @@
 package boosters.fundboost.project.domain.enums;
 
 public enum Progress {
-    PENDING(0),
-    APPROVED(1),
-    REJECTED(2);
+    PENDING("대기중"),
+    APPROVED("승인됨"),
+    REJECTED("반려됨");
 
-    private final int value;
+    private final String name;
 
-    Progress(int value) {
-        this.value = value;
+    Progress(String name) {
+        this.name = name;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public static Progress fromValue(int value) {
-        for (Progress progress : values()) {
-            if (progress.value == value) {
-                return progress;
-            }
-        }
-        throw new IllegalArgumentException("Invalid progress value: " + value);
+    public String getName() {
+        return name;
     }
 }

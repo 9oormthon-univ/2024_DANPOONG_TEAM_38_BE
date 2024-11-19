@@ -34,15 +34,15 @@ public class Project extends BaseEntity {
     private String teamDescription;
     private String account;
     private Long targetAmount;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProjectCategory category;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = true)
-    private Progress progress;
+    private Progress progress = Progress.PENDING;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Region region;
 
@@ -61,7 +61,7 @@ public class Project extends BaseEntity {
     @Builder
     public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
                    String account, String budgetDescription, String scheduleDescription, String teamDescription,
-                   Long targetAmount, Progress progress) {
+                   Long targetAmount, String introduction, Progress progress) { // introduction 추가
         this.mainTitle = mainTitle;
         this.subTitle = subTitle;
         this.image = image;
@@ -73,7 +73,8 @@ public class Project extends BaseEntity {
         this.scheduleDescription = scheduleDescription;
         this.teamDescription = teamDescription;
         this.targetAmount = targetAmount;
-        this.progress = progress;
+        this.introduction = introduction;
+        this.progress = progress != null ? progress : Progress.PENDING;
     }
 
 }

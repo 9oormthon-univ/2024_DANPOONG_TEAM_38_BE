@@ -3,13 +3,11 @@ package boosters.fundboost.project.controller;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
@@ -17,9 +15,9 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping("/basic-info")
-    public ResponseEntity<String> registerBasicInfo(@Validated @RequestBody ProjectBasicInfoRequest request) {
-        projectService.registerBasicInfo(request);
-        return ResponseEntity.ok("프로젝트 기본정보가 성공적으로 등록되었습니다.");
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createProject(@ModelAttribute ProjectBasicInfoRequest request) {
+        projectService.registerBasicInfo(request, request.getImage());
+        return ResponseEntity.ok("프로젝트가 성공적으로 생성되었습니다.");
     }
 }

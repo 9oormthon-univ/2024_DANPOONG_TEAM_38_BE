@@ -1,32 +1,27 @@
 package boosters.fundboost.project.domain.enums;
 
 public enum Region {
-    SEOUL(0),
-    BUSAN(1),
-    DAEGU(2),
-    INCHEON(3),
-    GWANGJU(4),
-    DAEJEON(5),
-    ULSAN(6),
-    JEJU(7);
+    SEOUL("서울특별시"),
+    INCHEON("인천광역시"),
+    DAEGU("대구광역시"),
+    BUSAN("부산광역시"),
+    GWANGJU("광주광역시"),
+    DAEJEON("대전광역시"),
+    ULSAN("울산광역시"),
+    JEJU("제주특별자치도"),
+    CHUNGCHEON("충청도"),
+    GYEONGGI("경기도"),
+    GANGWON("강원도"),
+    JEOLLA("전라도"),
+    GYEONGSANG("경상도");
 
-    private final int value;
+    private final String name;
 
-    Region(int value) {
-        this.value = value;
+    Region(String name) {
+        this.name = name;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public static Region fromValue(int value) {
-        for (Region region : values()) {
-            if (region.value == value) {
-                return region;
-            }
-        }
-        throw new IllegalArgumentException("Invalid region value: " + value);
+    public String getName() {
+        return name;
     }
 }
-
