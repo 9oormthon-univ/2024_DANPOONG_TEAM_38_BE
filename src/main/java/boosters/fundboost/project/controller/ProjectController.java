@@ -22,7 +22,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
 
-    @Operation(summary = "신규 등록 프로젝트 조회 API", description = "신규 등록된 프로젝트를 조회하고 3가지를 리턴합니다._숙희")
+    @Operation(summary = "신규 등록 프로젝트 조회 API", description = "최근 등록된 3개의 프로젝트를 조회합니다. 프로젝트는 등록일자 기준으로 정렬됩니다._숙희")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
