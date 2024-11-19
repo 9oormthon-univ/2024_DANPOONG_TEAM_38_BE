@@ -1,1 +1,30 @@
-spring.application.name=fund-boost
+spring:
+  application:
+    name: FundBoost
+  profiles:
+    active: dev
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
+
+kakao:
+  client: ${KAKAO_CLIENT_ID}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+
+api:
+  businessman:
+    serviceKey: ${BUSINESSMAN_SERVICE_KEY}
+    url: https://api.odcloud.kr/api/nts-businessman/v1/status

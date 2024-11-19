@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    image: fundboost/fundboost:latest
+    container_name: fundboost-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2
+    container_name: fundboost-redis
+    ports:
+      - "6379:6379"
+    restart: always
