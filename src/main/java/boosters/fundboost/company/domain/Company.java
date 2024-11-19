@@ -31,6 +31,8 @@ public class Company extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private CompanyCategory category;
 
     @Builder
     public Company(User user, String businessNumber, String password) {
