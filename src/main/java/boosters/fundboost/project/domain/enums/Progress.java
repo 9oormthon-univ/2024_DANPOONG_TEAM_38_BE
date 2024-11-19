@@ -1,4 +1,4 @@
 package boosters.fundboost.project.domain.enums;
 
-public enum Progress {
-}
+//public enum Progress {
+//}
