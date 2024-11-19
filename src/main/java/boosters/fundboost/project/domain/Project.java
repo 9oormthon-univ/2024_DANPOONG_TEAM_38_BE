@@ -2,6 +2,8 @@ package boosters.fundboost.project.domain;
 
 import boosters.fundboost.boost.domain.Boost;
 import boosters.fundboost.global.common.domain.BaseEntity;
+import boosters.fundboost.global.exception.ValidationException;
+import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
@@ -9,7 +11,20 @@ import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.user.domain.User;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +41,6 @@ public class Project extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
     private Long id;
-
     private String mainTitle;
     private String subTitle;
     private String introduction;
@@ -58,16 +72,21 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Proposal> proposals;
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Review> reviews;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    @PreUpdate
+    public void validateDates() {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new ValidationException(ErrorStatus.VALIDATION_ERROR);
+        }
+    }
 
     @Builder
     public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
