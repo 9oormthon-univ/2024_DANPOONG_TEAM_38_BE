@@ -7,6 +7,7 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -93,6 +94,14 @@ public class ProjectController {
     @GetMapping("/user-projects")
     public BaseResponse<List<NewProjectResponse>> getUserProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getUserProjects());
+    }
+    @Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트 ID로 특정 프로젝트를 상세 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @GetMapping("/{projectId}")
+    public BaseResponse<ProjectDetailResponse> getProjectDetail(@PathVariable Long projectId) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectDetail(projectId));
     }
 
 }

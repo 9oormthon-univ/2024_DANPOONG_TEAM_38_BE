@@ -9,6 +9,7 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.repository.UserRepository;
@@ -75,5 +76,11 @@ public class ProjectServiceImpl implements ProjectService {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
         return projectConverter.toNewProjectsResponse(projects);
+    }
+    @Override
+    public ProjectDetailResponse getProjectDetail(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로젝트입니다."));
+        return projectConverter.toProjectDetailResponse(project);
     }
 }

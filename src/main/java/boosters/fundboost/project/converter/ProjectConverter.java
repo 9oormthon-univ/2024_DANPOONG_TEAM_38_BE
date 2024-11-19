@@ -5,6 +5,7 @@ import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.user.domain.User;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +52,18 @@ public class ProjectConverter {
                 .progressRate(progressRate)
                 .achievedAmount(project.getAchievedAmount())
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .build();
+    }
+    public ProjectDetailResponse toProjectDetailResponse(Project project) {
+        return ProjectDetailResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .subTitle(project.getSubTitle())
+                .image(project.getImage())
+                .introduction(project.getIntroduction())
+                .budgetDescription(project.getBudgetDescription())
+                .scheduleDescription(project.getScheduleDescription())
+                .teamDescription(project.getTeamDescription())
                 .build();
     }
 }
