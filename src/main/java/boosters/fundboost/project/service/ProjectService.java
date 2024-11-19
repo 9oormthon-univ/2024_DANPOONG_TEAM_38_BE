@@ -13,4 +13,5 @@ public interface ProjectService {
     List<NewProjectResponse> getNewProjects();
     List<NewProjectResponse> getProjectsByCategory(ProjectCategory category);
     List<NewProjectResponse> getProjectsByRegion(Region region);
+    List<NewProjectResponse> getPopularProjects();
 }

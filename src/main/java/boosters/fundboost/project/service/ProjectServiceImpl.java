@@ -52,4 +52,9 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectRepository.findByRegion(region);
         return projectConverter.toNewProjectsResponse(projects);
     }
+    @Override
+    public List<NewProjectResponse> getPopularProjects() {
+        List<Project> projects = projectRepository.findPopularProjects();
+        return projectConverter.toNewProjectsResponse(projects);
+    }
 }

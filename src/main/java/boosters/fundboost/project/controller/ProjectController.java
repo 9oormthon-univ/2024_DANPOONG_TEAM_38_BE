@@ -56,4 +56,13 @@ public class ProjectController {
     public BaseResponse<List<NewProjectResponse>> getProjectsByRegion(@PathVariable Region region) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectsByRegion(region));
     }
+
+    @Operation(summary = "전체 인기 프로젝트 조회 API", description = "좋아요 순으로 정렬된 인기 프로젝트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @GetMapping("/popular")
+    public BaseResponse<List<NewProjectResponse>> getPopularProjects() {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getPopularProjects());
+    }
 }

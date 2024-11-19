@@ -18,4 +18,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p WHERE p.region = :region ORDER BY p.createdAt DESC")
     List<Project> findByRegion(Region region);
+
+    @Query("SELECT p FROM Project p LEFT JOIN Like l ON p.id = l.project.id GROUP BY p.id ORDER BY COUNT(l.id) DESC")
+    List<Project> findPopularProjects();
 }
