@@ -42,8 +42,11 @@ public class Project extends BaseEntity {
     private String teamDescription;
     private String account;
     private Long targetAmount;
+    @Enumerated(EnumType.STRING)
     private ProjectCategory category;
+    @Enumerated(EnumType.STRING)
     private Region region;
+    @Enumerated(EnumType.STRING)
     private Progress progress;
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
