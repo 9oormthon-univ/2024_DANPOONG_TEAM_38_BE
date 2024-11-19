@@ -70,4 +70,10 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> projects = projectRepository.findAllProjects(pageable);
         return projects.map(projectConverter::toNewProjectResponse);
     }
+    @Override
+    public List<NewProjectResponse> getUserProjects() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        List<Project> projects = projectRepository.findByUserId(userId);
+        return projectConverter.toNewProjectsResponse(projects);
+    }
 }

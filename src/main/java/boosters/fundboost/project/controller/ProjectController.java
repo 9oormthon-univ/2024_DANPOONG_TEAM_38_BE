@@ -86,4 +86,13 @@ public class ProjectController {
         Page<NewProjectResponse> response = projectService.getAllProjects(pageable);
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
+    @Operation(summary = "로그인 사용자 프로젝트 조회 API", description = "로그인한 사용자가 등록한 프로젝트만 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @GetMapping("/user-projects")
+    public BaseResponse<List<NewProjectResponse>> getUserProjects() {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getUserProjects());
+    }
+
 }

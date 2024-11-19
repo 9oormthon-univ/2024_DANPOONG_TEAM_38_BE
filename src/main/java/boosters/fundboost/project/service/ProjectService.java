@@ -18,4 +18,6 @@ public interface ProjectService {
     List<NewProjectResponse> getPopularProjects();
     List<NewProjectResponse> getCorporateFundingProjects();
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
+    List<NewProjectResponse> getUserProjects();
+
 }
