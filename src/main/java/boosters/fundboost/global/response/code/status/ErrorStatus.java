@@ -22,6 +22,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN402","유효하지 않은 토큰입니다."),
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER400", "유저를 찾을 수 없습니다."),
+    // PROJECT
+    PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PROJECT400", "프로젝트를 찾을 수 없습니다."),
+    PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "PROJECT401", "이미 존재하는 프로젝트입니다."),
+    PROJECT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PROJECT402", "프로젝트에 대한 접근이 금지되었습니다.");
     ;
 
     private final HttpStatus httpStatus;
