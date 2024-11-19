@@ -4,6 +4,7 @@ import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
 import boosters.fundboost.project.converter.ProjectConverter;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
@@ -12,6 +13,8 @@ import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,5 +59,15 @@ public class ProjectServiceImpl implements ProjectService {
     public List<NewProjectResponse> getPopularProjects() {
         List<Project> projects = projectRepository.findPopularProjects();
         return projectConverter.toNewProjectsResponse(projects);
+    }
+    @Override
+    public List<NewProjectResponse> getCorporateFundingProjects() {
+        var projects = projectRepository.findByProgress(Progress.CORPORATE_FUNDING);
+        return projectConverter.toNewProjectsResponse(projects);
+    }
+    @Override
+    public Page<NewProjectResponse> getAllProjects(Pageable pageable) {
+        Page<Project> projects = projectRepository.findAllProjects(pageable);
+        return projects.map(projectConverter::toNewProjectResponse);
     }
 }

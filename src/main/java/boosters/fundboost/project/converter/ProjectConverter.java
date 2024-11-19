@@ -39,7 +39,7 @@ public class ProjectConverter {
                 .collect(Collectors.toList());
     }
 
-    private NewProjectResponse toNewProjectResponse(Project project) {
+    public NewProjectResponse toNewProjectResponse(Project project) {
         double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
 
         return NewProjectResponse.builder()
