@@ -1,5 +1,6 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.global.common.domain.enums.GetType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -59,27 +61,32 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectRepository.findByRegion(region);
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public List<NewProjectResponse> getPopularProjects() {
         List<Project> projects = projectRepository.findPopularProjects();
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public List<NewProjectResponse> getCorporateFundingProjects() {
         var projects = projectRepository.findByProgress(Progress.CORPORATE_FUNDING);
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public Page<NewProjectResponse> getAllProjects(Pageable pageable) {
         Page<Project> projects = projectRepository.findAllProjects(pageable);
         return projects.map(projectConverter::toNewProjectResponse);
     }
+
     @Override
     public List<NewProjectResponse> getUserProjects() {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = projectRepository.findById(projectId)
