@@ -1,0 +1,100 @@
+package boosters.fundboost.company.repository;
+
+import java.util.LinkedHashMap;
+
+import boosters.fundboost.company.domain.Company;
+import boosters.fundboost.company.dto.CompanyRankingRecord;
+import boosters.fundboost.global.common.domain.enums.SortType;
+import boosters.fundboost.global.response.code.status.ErrorStatus;
+import boosters.fundboost.global.response.exception.GeneralException;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static boosters.fundboost.boost.domain.QBoost.boost;
+import static boosters.fundboost.company.domain.QCompany.company;
+
+@RequiredArgsConstructor
+public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
+    private final long LIMIT_SIZE = 3;
+    private static final int WEEK = 7;
+    private static final int MONTH = 1;
+    private static final int YEAR = 1;
+    private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Map<Company, CompanyRankingRecord> findCompanies(String sortType) {
+        LocalDate today = LocalDate.now();
+
+        Map<Company, CompanyRankingRecord> companies;
+
+        if (sortType == null || sortType.isEmpty() || sortType.equals(SortType.WEEKLY.getValue())) {
+            companies = getTopContributingCompaniesByAmount(today.minusDays(WEEK), today);
+        } else if (sortType.equals(SortType.MONTHLY.getValue())) {
+            companies = getTopContributingCompaniesByAmount(today.minusMonths(MONTH), today);
+        } else if (sortType.equals(SortType.ALLTIME.getValue())) {
+            companies = getTopContributingCompaniesByAmount(today.minusYears(YEAR), today);
+        } else if (sortType.equals(SortType.PROJECTS.getValue())) {
+            companies = getTopContributeCompaniesByProjects();
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_REQUEST_INFO);
+        }
+
+        return companies;
+    }
+
+    private Map<Company, CompanyRankingRecord> getTopContributingCompaniesByAmount(LocalDate startDate, LocalDate endDate) {
+        List<Tuple> companies = queryFactory
+                .select(company, boost.amount.sum(), boost.count()) // amount와 count를 동시에 선택
+                .from(boost)
+                .join(boost.company, company)
+                .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay())) // 기간에 맞는 조건
+                .groupBy(company.id)
+                .orderBy(boost.amount.sum().desc())
+                .limit(LIMIT_SIZE)
+                .fetch();
+
+        return companies.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(company),
+                        tuple -> CompanyRankingRecord.from(
+                                tuple.get(company),
+                                Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),  // null 처리: null일 경우 0으로 대체
+                                Optional.ofNullable(tuple.get(boost.count())).orElse(0L)  // null 처리: null일 경우 0으로 대체
+                        ),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Map<Company, CompanyRankingRecord> getTopContributeCompaniesByProjects() {
+        List<Tuple> companies = queryFactory
+                .select(company, boost.count())
+                .from(boost)
+                .join(boost.company, company)
+                .groupBy(company.id)
+                .orderBy(boost.count().desc())
+                .limit(3)
+                .fetch();
+
+        return companies.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(company),
+                        tuple -> CompanyRankingRecord.from(
+                                tuple.get(company),
+                                Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),  // null 처리: null일 경우 0으로 대체
+                                Optional.ofNullable(tuple.get(boost.count())).orElse(0L)  // null 처리: null일 경우 0으로 대체
+                        ),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new
+                ));
+    }
+}
+
