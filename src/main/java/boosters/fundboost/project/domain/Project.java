@@ -26,6 +26,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,16 +51,25 @@ public class Project extends BaseEntity {
     private String account;
     private long achievedAmount;
     private Long targetAmount;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProjectCategory category;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Region region;
+
     @Enumerated(EnumType.STRING)
-    private Progress progress;
+    @Column(nullable = false)
+    private Progress progress = Progress.DRAFT;
+
     private LocalDate startDate;
     private LocalDate endDate;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -76,5 +86,26 @@ public class Project extends BaseEntity {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new ValidationException(ErrorStatus.VALIDATION_ERROR);
         }
+    }
+
+    @Builder
+    public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
+                   String account, String budgetDescription, String scheduleDescription, String teamDescription,
+                   Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate) {
+        this.mainTitle = mainTitle;
+        this.subTitle = subTitle;
+        this.image = image;
+        this.category = category;
+        this.region = region;
+        this.user = user;
+        this.account = account;
+        this.budgetDescription = budgetDescription;
+        this.scheduleDescription = scheduleDescription;
+        this.teamDescription = teamDescription;
+        this.targetAmount = targetAmount;
+        this.introduction = introduction;
+        this.progress = progress != null ? progress : Progress.DRAFT;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }
