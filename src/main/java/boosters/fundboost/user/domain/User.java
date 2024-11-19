@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     private List<Project> projects;
 
     @Builder
-    public User(String name, String email, String image, UserType userType, String link, String title, String content) {
+    public User(String name, String email, String image, UserType userType, String link, String title, String content, Tag tag) {
         this.name = name;
         this.email = email;
         this.image = image;
@@ -51,5 +51,6 @@ public class User extends BaseEntity {
         this.link = link;
         this.title = title;
         this.content = content;
+        this.tag = tag;
     }
 }
