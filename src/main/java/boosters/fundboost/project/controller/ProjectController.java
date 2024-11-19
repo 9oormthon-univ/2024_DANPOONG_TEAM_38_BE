@@ -104,4 +104,15 @@ public class ProjectController {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectDetail(projectId));
     }
 
+    @Operation(summary = "누적 프로젝트 및 신규 프로젝트 수 조회 API",
+            description = "누적 프로젝트 및 신규 프로젝트 수를 조회합니다. 누적은 all, 신규는 new 를 파라미터 값으로 받습니다. _숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+            @ApiResponse(responseCode = "400", description = "INVALID_PARAMETER, 파라미터 값이 잘못되었습니다."),
+    })
+    @GetMapping("/count")
+    public BaseResponse<Long> getProjectCount(@RequestParam(name = "getType") String getType) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectCount(getType));
+    }
+
 }
