@@ -1,5 +1,6 @@
 package boosters.fundboost.boost.domain;
 
+import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.project.domain.Project;
 import jakarta.persistence.Column;
@@ -26,4 +27,7 @@ public class Boost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 }
