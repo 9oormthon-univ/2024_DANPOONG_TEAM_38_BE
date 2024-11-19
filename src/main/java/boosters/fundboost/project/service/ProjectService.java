@@ -21,4 +21,6 @@ public interface ProjectService {
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
     List<NewProjectResponse> getUserProjects();
     ProjectDetailResponse getProjectDetail(Long projectId);
+
+    long getProjectCount(String getType);
 }

@@ -86,4 +86,14 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+
+    @Override
+    public long getProjectCount(String getType) {
+        if (getType.equals(GetType.ALL.getType())) {
+            return projectRepository.count();
+        } else if (getType.equals(GetType.NEW.getType())) {
+            return projectRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay());
+        }
+        throw new ProjectException(ErrorStatus.INVALID_PARAMETER);
+    }
 }
