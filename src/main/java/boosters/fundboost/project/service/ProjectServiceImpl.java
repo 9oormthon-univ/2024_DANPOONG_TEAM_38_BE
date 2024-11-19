@@ -86,4 +86,33 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+    @Override
+    public void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+        if (!project.getUser().getId().equals(userId)) {
+            throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
+        }
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3Uploader.upload(image, "project-images");
+        }
+        project.updateBasicInfo(
+                request.getMainTitle(),
+                request.getSubTitle(),
+                imageUrl,
+                request.getCategory(),
+                request.getRegion(),
+                request.getAccount(),
+                request.getBudgetDescription(),
+                request.getScheduleDescription(),
+                request.getTeamDescription(),
+                request.getTargetAmount(),
+                request.getIntroduction(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+        projectRepository.save(project);
+    }
 }

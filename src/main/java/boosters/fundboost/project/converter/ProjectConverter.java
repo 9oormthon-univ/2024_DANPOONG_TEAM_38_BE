@@ -66,4 +66,22 @@ public class ProjectConverter {
                 .teamDescription(project.getTeamDescription())
                 .build();
     }
+    public Project updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
+        project.updateBasicInfo(
+                request.getMainTitle(),
+                request.getSubTitle(),
+                imageUrl,
+                request.getCategory(),
+                request.getRegion(),
+                request.getAccount(),
+                request.getBudgetDescription(),
+                request.getScheduleDescription(),
+                request.getTeamDescription(),
+                request.getTargetAmount(),
+                request.getIntroduction(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+        return project;
+    }
 }

@@ -103,5 +103,15 @@ public class ProjectController {
     public BaseResponse<ProjectDetailResponse> getProjectDetail(@PathVariable Long projectId) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectDetail(projectId));
     }
-
+    @Operation(summary = "프로젝트 수정 API", description = "프로젝트 기본 정보 및 관련 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @PutMapping(value = "/{projectId}", consumes = {"multipart/form-data"})
+    public BaseResponse<String> updateProject(
+            @PathVariable Long projectId,
+            @ModelAttribute ProjectBasicInfoRequest request) {
+        projectService.updateProject(projectId, request, request.getImage());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 수정되었습니다.");
+    }
 }
