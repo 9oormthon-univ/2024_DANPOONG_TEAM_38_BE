@@ -12,6 +12,8 @@ import boosters.fundboost.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -41,10 +44,16 @@ public class Project extends BaseEntity {
     private String scheduleDescription;
     private String teamDescription;
     private String account;
+    private long achievedAmount;
     private Long targetAmount;
+    @Enumerated(EnumType.STRING)
     private ProjectCategory category;
+    @Enumerated(EnumType.STRING)
     private Region region;
+    @Enumerated(EnumType.STRING)
     private Progress progress;
+    private LocalDate startDate;
+    private LocalDate endDate;
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
