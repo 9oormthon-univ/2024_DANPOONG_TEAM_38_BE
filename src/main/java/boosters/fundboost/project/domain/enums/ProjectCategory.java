@@ -8,22 +8,13 @@ public enum ProjectCategory {
     MUSIC("음악"),
     WEB_APP("웹/앱");
 
-    private final String value;
+    private final String name;
 
-    ProjectCategory(String value) {
-        this.value = value;
+    ProjectCategory(String name) {
+        this.name = name;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public static ProjectCategory fromValue(String value) {
-        for (ProjectCategory category : values()) {
-            if (category.value.equalsIgnoreCase(value)) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("Invalid category value: " + value);
+    public String getName() {
+        return name;
     }
 }

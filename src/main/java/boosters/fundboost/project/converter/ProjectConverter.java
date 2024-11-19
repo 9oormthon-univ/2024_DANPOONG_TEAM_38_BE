@@ -22,7 +22,7 @@ public class ProjectConverter {
                 .id(project.getId())
                 .mainTitle(project.getMainTitle())
                 .image(project.getImage())
-                .category(project.getCategory().getValue())
+                .category(project.getCategory().getName())
                 .region(project.getRegion().getName())
                 .progressRate(progressRate)
                 .achievedAmount(project.getAchievedAmount())
