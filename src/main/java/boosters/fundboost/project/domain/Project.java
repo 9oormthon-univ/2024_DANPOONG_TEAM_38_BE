@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -25,6 +26,7 @@ public class Project extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
     private Long id;
+
     private String mainTitle;
     private String subTitle;
     private String introduction;
@@ -33,25 +35,36 @@ public class Project extends BaseEntity {
     private String scheduleDescription;
     private String teamDescription;
     private String account;
+    private long achievedAmount;
     private Long targetAmount;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProjectCategory category;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private Progress progress = Progress.DRAFT;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Region region;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Progress progress = Progress.DRAFT;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Proposal> proposals;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Review> reviews;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -59,7 +72,7 @@ public class Project extends BaseEntity {
     @Builder
     public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
                    String account, String budgetDescription, String scheduleDescription, String teamDescription,
-                   Long targetAmount, String introduction, Progress progress) { // introduction 추가
+                   Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate) {
         this.mainTitle = mainTitle;
         this.subTitle = subTitle;
         this.image = image;
@@ -73,6 +86,7 @@ public class Project extends BaseEntity {
         this.targetAmount = targetAmount;
         this.introduction = introduction;
         this.progress = progress != null ? progress : Progress.DRAFT;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
-
 }

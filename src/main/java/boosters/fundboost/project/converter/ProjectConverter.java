@@ -1,9 +1,15 @@
 package boosters.fundboost.project.converter;
 
+import boosters.fundboost.global.utils.CalculatorUtil;
+import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.user.domain.User;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ProjectConverter {
@@ -22,6 +28,27 @@ public class ProjectConverter {
                 .targetAmount(request.getTargetAmount())
                 .introduction(request.getIntroduction())
                 .user(user)
+                .build();
+    }
+
+    public List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
+        return projects.stream()
+                .map(this::toNewProjectResponse)
+                .collect(Collectors.toList());
+    }
+
+    private NewProjectResponse toNewProjectResponse(Project project) {
+        double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
+
+        return NewProjectResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .image(project.getImage())
+                .category(project.getCategory().getName())
+                .region(project.getRegion().getName())
+                .progressRate(progressRate)
+                .achievedAmount(project.getAchievedAmount())
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
     }
 }

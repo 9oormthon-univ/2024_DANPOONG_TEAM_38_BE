@@ -9,7 +9,7 @@ public enum Region {
     DAEJEON("대전광역시"),
     ULSAN("울산광역시"),
     JEJU("제주특별자치도"),
-    CHUNGCHEON("충청도"),
+    CHUNGCHEONG("충청도"),
     GYEONGGI("경기도"),
     GANGWON("강원도"),
     JEOLLA("전라도"),
