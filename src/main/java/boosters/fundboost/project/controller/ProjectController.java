@@ -2,6 +2,8 @@ package boosters.fundboost.project.controller;
 
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
+import boosters.fundboost.project.domain.enums.ProjectCategory;
+import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.service.ProjectService;
@@ -36,5 +38,22 @@ public class ProjectController {
     @GetMapping("/new")
     public BaseResponse<List<NewProjectResponse>> getNewProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getNewProjects());
+    }
+    @Operation(summary = "카테고리별 프로젝트 조회 API", description = "특정 카테고리에 해당하는 프로젝트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @GetMapping("/category/{category}")
+    public BaseResponse<List<NewProjectResponse>> getProjectsByCategory(@PathVariable ProjectCategory category) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectsByCategory(category));
+    }
+
+    @Operation(summary = "지역별 프로젝트 조회 API", description = "특정 지역에 해당하는 프로젝트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @GetMapping("/region/{region}")
+    public BaseResponse<List<NewProjectResponse>> getProjectsByRegion(@PathVariable Region region) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectsByRegion(region));
     }
 }
