@@ -11,6 +11,7 @@ import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,10 +34,18 @@ public class Project extends BaseEntity {
     private String teamDescription;
     private String account;
     private Long targetAmount;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
     private ProjectCategory category;
-    private Region region;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = true)
     private Progress progress;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private Region region;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -48,4 +57,23 @@ public class Project extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
+                   String account, String budgetDescription, String scheduleDescription, String teamDescription,
+                   Long targetAmount, Progress progress) {
+        this.mainTitle = mainTitle;
+        this.subTitle = subTitle;
+        this.image = image;
+        this.category = category;
+        this.region = region;
+        this.user = user;
+        this.account = account;
+        this.budgetDescription = budgetDescription;
+        this.scheduleDescription = scheduleDescription;
+        this.teamDescription = teamDescription;
+        this.targetAmount = targetAmount;
+        this.progress = progress;
+    }
+
 }

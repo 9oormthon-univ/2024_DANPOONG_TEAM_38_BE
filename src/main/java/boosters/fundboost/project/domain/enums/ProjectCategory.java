@@ -1,10 +1,29 @@
 package boosters.fundboost.project.domain.enums;
 
 public enum ProjectCategory {
-    MUSIC,  // 음악
-    ART,    // 미술
-    WEB_APP, // 웹/앱
-    BEAUTY, // 뷰티
-    ACCESSORY, // 소품
-    GAME // 게임
+    ACCESSORY(0),
+    ART(1),
+    BEAUTY(2),
+    GAME(3),
+    MUSIC(4),
+    WEB_APP(5);
+
+    private final int value;
+
+    ProjectCategory(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static ProjectCategory fromValue(int value) {
+        for (ProjectCategory category : values()) {
+            if (category.value == value) {
+                return category;
+            }
+        }
+        throw new IllegalArgumentException("Invalid category value: " + value);
+    }
 }
