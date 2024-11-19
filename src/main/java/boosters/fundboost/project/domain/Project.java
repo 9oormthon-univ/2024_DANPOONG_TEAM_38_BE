@@ -37,11 +37,9 @@ public class Project extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProjectCategory category;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
-    private Progress progress = Progress.PENDING;
-
+    private Progress progress = Progress.DRAFT;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Region region;
@@ -74,7 +72,7 @@ public class Project extends BaseEntity {
         this.teamDescription = teamDescription;
         this.targetAmount = targetAmount;
         this.introduction = introduction;
-        this.progress = progress != null ? progress : Progress.PENDING;
+        this.progress = progress != null ? progress : Progress.DRAFT;
     }
 
 }

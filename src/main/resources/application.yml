@@ -2,7 +2,7 @@ spring:
   application:
     name: FundBoost
   profiles:
-    active: dev
+    active: local
   mail:
     host: smtp.gmail.com
     port: 587

@@ -1,17 +1,14 @@
 package boosters.fundboost.project.domain.enums;
 
 public enum Progress {
-    PENDING("대기중"),
-    APPROVED("승인됨"),
-    REJECTED("반려됨");
+    DRAFT("작성"),
+    REVIEW("심사"),
+    FUNDING("펀딩"),
+    FUNDING_COMPLETED("펀딩 완료");
 
-    private final String name;
+    private final String status;
 
-    Progress(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+    Progress(String status) {
+        this.status = status;
     }
 }
