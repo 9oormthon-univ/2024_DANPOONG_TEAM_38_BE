@@ -9,20 +9,13 @@ import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.user.domain.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -33,6 +26,7 @@ public class Project extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
     private Long id;
+
     private String mainTitle;
     private String subTitle;
     private String introduction;
@@ -41,19 +35,58 @@ public class Project extends BaseEntity {
     private String scheduleDescription;
     private String teamDescription;
     private String account;
+    private long achievedAmount;
     private Long targetAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProjectCategory category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Region region;
-    private Progress progress;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Progress progress = Progress.DRAFT;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Proposal> proposals;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Review> reviews;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
+                   String account, String budgetDescription, String scheduleDescription, String teamDescription,
+                   Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate) {
+        this.mainTitle = mainTitle;
+        this.subTitle = subTitle;
+        this.image = image;
+        this.category = category;
+        this.region = region;
+        this.user = user;
+        this.account = account;
+        this.budgetDescription = budgetDescription;
+        this.scheduleDescription = scheduleDescription;
+        this.teamDescription = teamDescription;
+        this.targetAmount = targetAmount;
+        this.introduction = introduction;
+        this.progress = progress != null ? progress : Progress.DRAFT;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
