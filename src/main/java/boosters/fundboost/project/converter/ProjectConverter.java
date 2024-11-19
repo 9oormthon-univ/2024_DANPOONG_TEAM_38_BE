@@ -27,6 +27,8 @@ public class ProjectConverter {
                 .teamDescription(request.getTeamDescription())
                 .targetAmount(request.getTargetAmount())
                 .introduction(request.getIntroduction())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .user(user)
                 .build();
     }
