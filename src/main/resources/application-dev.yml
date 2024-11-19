@@ -2,7 +2,7 @@ spring:
   config:
     activate:
       on-profile: dev
-  redis:
+  data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}

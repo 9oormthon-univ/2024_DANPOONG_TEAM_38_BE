@@ -23,3 +23,8 @@ jwt:
 kakao:
   client: ${KAKAO_CLIENT_ID}
   redirect-uri: ${KAKAO_REDIRECT_URI}
+
+api:
+  businessman:
+    serviceKey: ${BUSINESSMAN_SERVICE_KEY}
+    url: https://api.odcloud.kr/api/nts-businessman/v1/status
