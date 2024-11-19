@@ -8,11 +8,11 @@ import boosters.fundboost.global.common.domain.enums.SortType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.response.exception.GeneralException;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,10 +23,10 @@ import static boosters.fundboost.company.domain.QCompany.company;
 
 @RequiredArgsConstructor
 public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
-    private final long LIMIT_SIZE = 3;
+    private static final long LIMIT_SIZE = 3;
     private static final int WEEK = 7;
     private static final int MONTH = 1;
-    private static final int YEAR = 1;
+    private static final int YEAR = 3;
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -51,39 +51,30 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
     }
 
     private Map<Company, CompanyRankingRecord> getTopContributingCompaniesByAmount(LocalDate startDate, LocalDate endDate) {
-        List<Tuple> companies = queryFactory
-                .select(company, boost.amount.sum(), boost.count()) // amount와 count를 동시에 선택
+        List<Tuple> companies = getCompanies(boost.amount.sum(), startDate, endDate);
+
+        return mapToCompanyRankingRecord(companies);
+    }
+
+    private Map<Company, CompanyRankingRecord> getTopContributeCompaniesByProjects() {
+        List<Tuple> companies = getCompanies(boost.count(), LocalDate.now().minusYears(YEAR), LocalDate.now());
+
+        return mapToCompanyRankingRecord(companies);
+    }
+
+    private List<Tuple> getCompanies(NumberExpression numberExpression, LocalDate startDate, LocalDate endDate) {
+        return queryFactory
+                .select(company, boost.amount.sum(), boost.count())
                 .from(boost)
                 .join(boost.company, company)
                 .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay())) // 기간에 맞는 조건
                 .groupBy(company.id)
-                .orderBy(boost.amount.sum().desc())
+                .orderBy(numberExpression.desc())
                 .limit(LIMIT_SIZE)
                 .fetch();
-
-        return companies.stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(company),
-                        tuple -> CompanyRankingRecord.from(
-                                tuple.get(company),
-                                Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),  // null 처리: null일 경우 0으로 대체
-                                Optional.ofNullable(tuple.get(boost.count())).orElse(0L)  // null 처리: null일 경우 0으로 대체
-                        ),
-                        (existing, replacement) -> existing,
-                        LinkedHashMap::new
-                ));
     }
 
-    private Map<Company, CompanyRankingRecord> getTopContributeCompaniesByProjects() {
-        List<Tuple> companies = queryFactory
-                .select(company, boost.count())
-                .from(boost)
-                .join(boost.company, company)
-                .groupBy(company.id)
-                .orderBy(boost.count().desc())
-                .limit(3)
-                .fetch();
-
+    private Map<Company, CompanyRankingRecord> mapToCompanyRankingRecord(List<Tuple> companies) {
         return companies.stream()
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(company),
@@ -97,4 +88,3 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                 ));
     }
 }
-
