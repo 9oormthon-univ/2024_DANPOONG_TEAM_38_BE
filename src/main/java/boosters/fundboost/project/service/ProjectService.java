@@ -4,6 +4,7 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,5 +20,5 @@ public interface ProjectService {
     List<NewProjectResponse> getCorporateFundingProjects();
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
     List<NewProjectResponse> getUserProjects();
-
+    ProjectDetailResponse getProjectDetail(Long projectId);
 }
