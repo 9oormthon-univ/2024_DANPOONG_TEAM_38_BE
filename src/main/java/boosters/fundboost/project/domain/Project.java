@@ -44,7 +44,7 @@ public class Project extends BaseEntity {
     private String scheduleDescription;
     private String teamDescription;
     private String account;
-    private Long achievedAmount;
+    private long achievedAmount;
     private Long targetAmount;
     @Enumerated(EnumType.STRING)
     private ProjectCategory category;
