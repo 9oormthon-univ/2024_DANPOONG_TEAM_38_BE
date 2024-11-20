@@ -52,7 +52,7 @@ public class UserController {
     @GetMapping("/boosts")
     public BaseResponse<Page<ProjectPreviewResponse>> getBoostedProjects(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value="userId")long userId) {
-        return BaseResponse.onSuccess(SuccessStatus._OK, userService.getBoostedProjects(userId, page));
+            @Parameter(name = "user", hidden = true) @AuthUser User user) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, userService.getBoostedProjects(user.getId(), page));
     }
 }
