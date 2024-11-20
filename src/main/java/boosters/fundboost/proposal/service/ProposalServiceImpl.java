@@ -34,8 +34,8 @@ public class ProposalServiceImpl implements ProposalService {
     public void writeProposal(User user, ProposalRequest request) {
         Company company = companyService.findById(request.getCompanyId());
         String fileUrl = Optional.ofNullable(request.getFile())
-                .filter(image -> !image.isEmpty())
-                .map(image -> s3UploaderService.uploadFile(image, UploadType.FILE.getDirectory()))
+                .filter(file -> !file.isEmpty())
+                .map(file -> s3UploaderService.uploadFile(file, UploadType.FILE.getDirectory()))
                 .orElse(null);
 
         Proposal proposal = createProposal(user, request, fileUrl, company);
