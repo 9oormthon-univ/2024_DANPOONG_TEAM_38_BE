@@ -1,8 +1,12 @@
 package boosters.fundboost.company.service;
 
+import boosters.fundboost.company.converter.CompanyRankingConverter;
 import boosters.fundboost.company.domain.Company;
+import boosters.fundboost.company.dto.CompanyRankingRecord;
 import boosters.fundboost.company.dto.request.CompanyLoginRequest;
+import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingResponse;
 import boosters.fundboost.company.repository.CompanyRepository;
 import boosters.fundboost.company.auth.email.service.EmailService;
 import boosters.fundboost.global.security.jwt.JwtTokenProvider;
@@ -13,7 +17,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
@@ -104,5 +111,13 @@ public class CompanyService {
     public void logout(String email) {
         String redisKey = "refresh_token:" + email;
         redisTemplate.delete(redisKey);
+    }
+
+    public List<CompanyRankingResponse> getRanking(CompanyRankingRequest companyRankingRequest) {
+        Map<Company, CompanyRankingRecord> companies = companyRepository.findCompanies(companyRankingRequest.sortType());
+
+        return companies.entrySet().stream()
+                .map(entry -> CompanyRankingConverter.toCompanyRankingResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

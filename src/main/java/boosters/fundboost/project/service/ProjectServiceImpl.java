@@ -1,5 +1,7 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.global.common.domain.enums.GetType;
+import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
 import boosters.fundboost.project.converter.ProjectConverter;
@@ -9,8 +11,11 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
+import boosters.fundboost.project.exception.ProjectException;
 import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.exception.UserException;
 import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image) {
         Long userId = SecurityUtils.getCurrentUserId();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
         String imageUrl = s3Uploader.upload(image, "project-images");
         Project project = projectConverter.toEntity(request, imageUrl, user);
         projectRepository.save(project);
@@ -55,25 +61,46 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectRepository.findByRegion(region);
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public List<NewProjectResponse> getPopularProjects() {
         List<Project> projects = projectRepository.findPopularProjects();
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public List<NewProjectResponse> getCorporateFundingProjects() {
         var projects = projectRepository.findByProgress(Progress.CORPORATE_FUNDING);
         return projectConverter.toNewProjectsResponse(projects);
     }
+
     @Override
     public Page<NewProjectResponse> getAllProjects(Pageable pageable) {
         Page<Project> projects = projectRepository.findAllProjects(pageable);
         return projects.map(projectConverter::toNewProjectResponse);
     }
+
     @Override
     public List<NewProjectResponse> getUserProjects() {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
         return projectConverter.toNewProjectsResponse(projects);
+    }
+
+    @Override
+    public ProjectDetailResponse getProjectDetail(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+        return projectConverter.toProjectDetailResponse(project);
+    }
+
+    @Override
+    public long getProjectCount(String getType) {
+        if (getType.equals(GetType.ALL.getType())) {
+            return projectRepository.count();
+        } else if (getType.equals(GetType.NEW.getType())) {
+            return projectRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay());
+        }
+        throw new ProjectException(ErrorStatus.INVALID_PARAMETER);
     }
 }

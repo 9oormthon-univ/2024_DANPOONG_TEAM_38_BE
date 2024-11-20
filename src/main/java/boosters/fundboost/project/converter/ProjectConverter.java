@@ -5,7 +5,10 @@ import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
+import boosters.fundboost.project.dto.response.ProjectDetailResponse;
+import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,5 +55,29 @@ public class ProjectConverter {
                 .achievedAmount(project.getAchievedAmount())
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
+    }
+
+    public ProjectDetailResponse toProjectDetailResponse(Project project) {
+        return ProjectDetailResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .subTitle(project.getSubTitle())
+                .image(project.getImage())
+                .introduction(project.getIntroduction())
+                .budgetDescription(project.getBudgetDescription())
+                .scheduleDescription(project.getScheduleDescription())
+                .teamDescription(project.getTeamDescription())
+                .build();
+    }
+
+    public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
+        return projects.map(project -> ProjectPreviewResponse.builder()
+                .image(project.getImage())
+                .mainTitle(project.getMainTitle())
+                .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .progress(project.getProgress().name())
+                .category(project.getCategory().getName())
+                .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
+                .build());
     }
 }
