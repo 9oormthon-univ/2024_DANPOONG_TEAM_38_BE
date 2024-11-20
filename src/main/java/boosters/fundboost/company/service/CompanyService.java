@@ -11,6 +11,7 @@ import boosters.fundboost.company.repository.CompanyRepository;
 import boosters.fundboost.company.auth.email.service.EmailService;
 import boosters.fundboost.global.security.jwt.JwtTokenProvider;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.repository.UserRepository;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -60,6 +61,7 @@ public class CompanyService {
         User user = User.builder()
                 .email(request.getEmail())
                 .userType(UserType.COMPANY) // Enum 값 설정
+                .tag(Tag.SEASSAK_INVESTOR)
                 .build();
         userRepository.save(user);
 

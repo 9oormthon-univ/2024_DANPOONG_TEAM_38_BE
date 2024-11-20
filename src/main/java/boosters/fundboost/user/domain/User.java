@@ -36,7 +36,7 @@ public class User extends BaseEntity {
     private String title;
     private String content;
     @Enumerated(EnumType.STRING)
-    private Tag tag;
+    private Tag tag = Tag.SEASSAK_INVESTOR;
     @OneToOne(mappedBy = "user")
     private Company company;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)

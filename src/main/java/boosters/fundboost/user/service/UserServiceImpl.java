@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     private final BoostService boostService;
 
     @Override
-    public User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+    public User getUser(String userEmail) {
+        return userRepository.findByEmail(userEmail).orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
     }
 
     @Override
@@ -45,11 +45,6 @@ public class UserServiceImpl implements UserService {
         Page<Project> projects = likeService.getLikeProjects(userId, pageable);
 
         return ProjectConverter.toProjectPreviewResponse(projects);
-    }
-
-    @Override
-    public User findUserById(Long userId) {
-        return getUser(userId);
     }
 
     @Override
