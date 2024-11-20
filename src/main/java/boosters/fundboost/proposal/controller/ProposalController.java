@@ -28,7 +28,7 @@ public class ProposalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    @PostMapping(name = "/proposal", consumes = {"multipart/form-data"})
+    @PostMapping(name = "/write", consumes = {"multipart/form-data"})
     public BaseResponse<?> createProposal(@Parameter(name = "user", hidden = true) @AuthUser User user,
                                           @ModelAttribute ProposalRequest request) {
         proposalService.writeProposal(user, request);
