@@ -66,7 +66,7 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
         return queryFactory
                 .select(company, boost.amount.sum(), boost.count())
                 .from(boost)
-                .join(boost.company, company)
+                .join(boost.user.company, company)
                 .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay()))
                 .groupBy(company.id)
                 .orderBy(numberExpression.desc())
