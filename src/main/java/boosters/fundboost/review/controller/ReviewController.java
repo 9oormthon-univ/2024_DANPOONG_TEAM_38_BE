@@ -29,4 +29,13 @@ public class ReviewController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/completion")
+    public ResponseEntity<ReviewResponseDto> createCompletionReview(
+            @PathVariable Long projectId,
+            @Valid @RequestBody ReviewRequestDto reviewRequestDto) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        ReviewResponseDto response = reviewService.createCompletionReview(projectId, userId, reviewRequestDto);
+        return ResponseEntity.ok(response);
+    }
 }

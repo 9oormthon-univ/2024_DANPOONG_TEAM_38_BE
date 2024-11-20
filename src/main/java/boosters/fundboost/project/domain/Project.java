@@ -67,7 +67,7 @@ public class Project extends BaseEntity {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Boost> boosts;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)

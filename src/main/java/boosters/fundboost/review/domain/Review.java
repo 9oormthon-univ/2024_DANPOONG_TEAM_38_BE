@@ -28,6 +28,7 @@ public class Review extends BaseEntity {
     @Column(name = "review_id")
     private Long id;
     private String image;
+    private String title;
     private String description;
     @Enumerated(EnumType.STRING)
     private ReviewType reviewType;
@@ -35,12 +36,13 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boost_id",nullable = false)
+    @JoinColumn(name = "boost_id",nullable = true)
     private Boost boost;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    public Review(String description, ReviewType reviewType, Project project, User user, Boost boost) {
+    public Review(String title, String description, ReviewType reviewType, Project project, User user, Boost boost) {
+        this.title = title;
         this.description = description;
         this.reviewType = reviewType;
         this.project = project;

@@ -47,4 +47,27 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewConverter.toResponseDto(review);
     }
+    @Override
+    public ReviewResponseDto createCompletionReview(Long projectId, Long userId, ReviewRequestDto reviewRequestDto) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 프로젝트 ID입니다."));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
+        if (!project.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("마감후기는 프로젝트 등록자만 작성할 수 있습니다.");
+        }
+
+        Review review = reviewConverter.toEntity(
+                reviewRequestDto,
+                ReviewType.COMPLETION_REVIEW,
+                project,
+                user,
+                null
+        );
+        reviewRepository.save(review);
+
+        return reviewConverter.toResponseDto(review);
+    }
 }
