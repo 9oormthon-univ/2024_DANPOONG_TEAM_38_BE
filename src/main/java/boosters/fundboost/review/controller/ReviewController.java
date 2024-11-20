@@ -55,14 +55,16 @@ public class ReviewController {
         ReviewResponseDto response = reviewService.createCompletionReview(projectId, userId, reviewRequestDto);
         return ResponseEntity.ok(response);
     }
-
     @GetMapping("/{reviewType}")
+    @Operation(summary = "후기 조회 API", description = "타입 별 후기를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ResponseEntity<List<ReviewResponseDto>> getProjectReviewsByType(
             @PathVariable Long projectId,
             @PathVariable ReviewType reviewType) {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByProjectIdAndType(projectId, reviewType);
         return ResponseEntity.ok(reviews);
     }
-
 }
 

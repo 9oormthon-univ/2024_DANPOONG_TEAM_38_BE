@@ -9,6 +9,8 @@ import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.user.domain.User;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class ReviewConverter {
 
@@ -19,7 +21,17 @@ public class ReviewConverter {
                 reviewType,
                 project,
                 user,
-                null // boost 제거
+                null
+        );
+    }
+    public ReviewResponseDto toResponseDto(Review review, BigDecimal amount) {
+        return new ReviewResponseDto(
+                review.getId(),
+                review.getTitle(),
+                review.getDescription(),
+                review.getUser() != null ? review.getUser().getName() : "Unknown Author",
+                review.getCreatedAt(),
+                amount
         );
     }
 
@@ -29,7 +41,8 @@ public class ReviewConverter {
                 review.getTitle(),
                 review.getDescription(),
                 review.getUser() != null ? review.getUser().getName() : "Unknown Author",
-                review.getCreatedAt()
+                review.getCreatedAt(),
+                BigDecimal.ZERO
         );
     }
 }

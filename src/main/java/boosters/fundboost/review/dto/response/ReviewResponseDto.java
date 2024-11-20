@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,5 +18,6 @@ public class ReviewResponseDto {
     private String description;
     private String author;
     private LocalDateTime createdAt;
+    private BigDecimal amount;
 }
 

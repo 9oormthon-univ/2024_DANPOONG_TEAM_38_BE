@@ -1,7 +1,5 @@
 package boosters.fundboost.review.service;
 
-import boosters.fundboost.boost.domain.Boost;
-import boosters.fundboost.boost.repository.BoostRepository;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.repository.ProjectRepository;
@@ -18,6 +16,7 @@ import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,12 +71,20 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewConverter.toResponseDto(review);
     }
-
     @Override
     public List<ReviewResponseDto> getReviewsByProjectIdAndType(Long projectId, ReviewType reviewType) {
-        List<Review> reviews = reviewRepository.findByProjectIdAndReviewType(projectId, reviewType);
-        return reviews.stream()
-                .map(reviewConverter::toResponseDto)
+        List<Object[]> reviewsWithAmount = reviewRepository.findReviewsWithAmountByProjectIdAndType(projectId, reviewType);
+
+        return reviewsWithAmount.stream()
+                .map(record -> {
+                    Review review = (Review) record[0];
+                    BigDecimal amount = record[1] != null
+                            ? (record[1] instanceof BigDecimal
+                            ? (BigDecimal) record[1]
+                            : BigDecimal.valueOf(((Number) record[1]).longValue()))
+                            : null;
+                    return reviewConverter.toResponseDto(review, amount);
+                })
                 .collect(Collectors.toList());
     }
 }
