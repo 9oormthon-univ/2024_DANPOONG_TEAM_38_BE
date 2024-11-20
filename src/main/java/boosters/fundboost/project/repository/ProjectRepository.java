@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long>, CustomProjectRepository {
 
     @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC LIMIT 3")
     List<Project> findNewProjects();
@@ -26,11 +26,15 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p LEFT JOIN Like l ON p.id = l.project.id GROUP BY p.id ORDER BY COUNT(l.id) DESC")
     List<Project> findPopularProjects();
+
     @Query("SELECT p FROM Project p WHERE p.progress = :progress")
     List<Project> findByProgress(Progress progress);
+
     @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC")
     Page<Project> findAllProjects(Pageable pageable);
+
     @Query("SELECT p FROM Project p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Project> findByUserId(@Param("userId") Long userId);
+
     long countByCreatedAtAfter(LocalDateTime date);
 }
