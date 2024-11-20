@@ -12,6 +12,5 @@ public interface UserService {
     UserMyPageResponse getMyPage(User user);
 
     Page<ProjectPreviewResponse> getFavProjects(Long userId, int page);
-    UserMyPageResponse getMyPageById(Long userId);
     User findUserById(Long userId);
 }

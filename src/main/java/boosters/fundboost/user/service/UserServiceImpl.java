@@ -44,11 +44,6 @@ public class UserServiceImpl implements UserService {
 
         return ProjectConverter.toProjectPreviewResponse(projects);
     }
-    @Override
-    public UserMyPageResponse getMyPageById(Long userId) {
-        User user = getUser(userId);
-        return getMyPage(user);
-    }
 
     @Override
     public User findUserById(Long userId) {
