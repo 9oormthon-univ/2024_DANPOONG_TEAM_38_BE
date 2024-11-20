@@ -1,5 +1,10 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.company.converter.CompanyRankingConverter;
+import boosters.fundboost.company.domain.Company;
+import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewRecord;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.common.domain.enums.GetType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
@@ -17,8 +22,11 @@ import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.exception.UserException;
 import boosters.fundboost.user.repository.UserRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +34,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+    private final static int PAGE_SIZE = 3;
+    private final static int COMPANY_RANKING_INDEX = 0;
+    private final static int CONTRIBUTION_AMOUNT_INDEX = 1;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
@@ -129,5 +141,20 @@ public class ProjectServiceImpl implements ProjectService {
             return projectRepository.countByCreatedAtAfter(LocalDate.now().atStartOfDay());
         }
         throw new ProjectException(ErrorStatus.INVALID_PARAMETER);
+    }
+
+    @Override
+    public Page<CompanyRankingPreviewResponse> getBoostedCompanyRanking(CompanyRankingPreviewRequest request) {
+        Pageable pageable = PageRequest.of(request.page(), PAGE_SIZE);
+        Page<Tuple> companies = projectRepository.findBoostedCompanies(request.projectId(), pageable);
+
+        List<CompanyRankingPreviewResponse> responses = companies.getContent().stream()
+                .map(tuple -> CompanyRankingConverter.toCompanyRankingPreviewResponse(
+                        Objects.requireNonNull(tuple.get(COMPANY_RANKING_INDEX, Company.class)),
+                        new CompanyRankingPreviewRecord(tuple.get(CONTRIBUTION_AMOUNT_INDEX, Long.class))
+                ))
+                .toList();
+
+        return new PageImpl<>(responses, pageable, companies.getTotalElements());
     }
 }

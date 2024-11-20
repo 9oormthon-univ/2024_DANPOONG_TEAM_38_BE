@@ -7,15 +7,10 @@ import boosters.fundboost.company.dto.response.CompanyRankingRecord;
 import boosters.fundboost.global.common.domain.enums.SortType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.response.exception.GeneralException;
-import boosters.fundboost.project.domain.Project;
-import boosters.fundboost.project.domain.QProject;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,25 +48,6 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
         }
 
         return companies;
-    }
-
-    @Override
-    public Page<Tuple> findBoostedCompanies(long projectId, Pageable pageable) {
-        Project project = queryFactory.select(QProject.project)
-                .from(QProject.project)
-                .where(QProject.project.id.eq(projectId))
-                .fetchOne();
-
-        List<Tuple> companies = queryFactory
-                .select(company, boost.amount.sum())
-                .from(boost)
-                .where(boost.project.eq(project))
-                .join(boost.user.company, company)
-                .groupBy(company.id)
-                .orderBy(boost.amount.sum().desc())
-                .fetch();
-
-        return new PageImpl<>(companies, pageable, companies.size());
     }
 
     private Map<Company, CompanyRankingRecord> getTopContributingCompaniesByAmount(LocalDate startDate, LocalDate endDate) {
