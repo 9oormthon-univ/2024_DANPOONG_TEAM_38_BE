@@ -79,7 +79,6 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(company),
                         tuple -> CompanyRankingRecord.from(
-                                tuple.get(company),
                                 Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),
                                 Optional.ofNullable(tuple.get(boost.count())).orElse(0L)
                         ),
