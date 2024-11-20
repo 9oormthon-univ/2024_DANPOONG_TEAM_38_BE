@@ -51,13 +51,10 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public ProposalResponse getProposal(User user,Long id) {
-        if(proposalRepository.existsByUser(user)){
-           throw new ProposalException(ErrorStatus.PROPOSAL_NOT_FOUND);
-        }
-
-        Proposal proposal = proposalRepository.findById(id)
+    public ProposalResponse getProposal(User user, Long proposalId) {
+        Proposal proposal = proposalRepository.findByIdAndCompany(proposalId, user.getCompany())
                 .orElseThrow(() -> new ProposalException(ErrorStatus.PROPOSAL_NOT_FOUND));
+
         return ProposalConverter.toProposalResponse(proposal);
     }
 
