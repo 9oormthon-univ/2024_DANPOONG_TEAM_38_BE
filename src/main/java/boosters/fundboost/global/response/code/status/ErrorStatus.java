@@ -16,6 +16,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
     INVALID_REQUEST_INFO(HttpStatus.BAD_REQUEST, "COMMON404", "요청된 정보가 올바르지 않습니다."),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "COMMON405", "유효성 검증에 실패했습니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON405", "유효하지 않은 파라미터입니다."),
     //TOKEN
     NOT_FOUND_TOKEN(HttpStatus.NOT_FOUND, "TOKEN400", "토큰을 찾을 수 없습니다."),
     NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN401","토큰이 일치하지 않습니다."),
@@ -26,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PROJECT400", "프로젝트를 찾을 수 없습니다."),
     PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "PROJECT401", "이미 존재하는 프로젝트입니다."),
     PROJECT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PROJECT402", "프로젝트에 대한 접근이 금지되었습니다."),
+
     UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "PROJECT403", "해당 프로젝트를 수정할 권한이 없습니다.");
     ;
 

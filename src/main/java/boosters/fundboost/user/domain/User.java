@@ -3,7 +3,9 @@ package boosters.fundboost.user.domain;
 import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.follow.domain.Follow;
 import boosters.fundboost.global.common.domain.BaseEntity;
+import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,16 +34,19 @@ public class User extends BaseEntity {
     private String link;
     private String title;
     private String content;
-    //    private Tag tag;
+    @Enumerated(EnumType.STRING)
+    private Tag tag;
     @OneToOne(mappedBy = "user")
     private Company company;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> follows;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Project> projects;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Like> likes;
 
     @Builder
-    public User(String name, String email, String image, UserType userType, String link, String title, String content) {
+    public User(String name, String email, String image, UserType userType, String link, String title, String content, Tag tag) {
         this.name = name;
         this.email = email;
         this.image = image;
@@ -49,5 +54,6 @@ public class User extends BaseEntity {
         this.link = link;
         this.title = title;
         this.content = content;
+        this.tag = tag;
     }
 }

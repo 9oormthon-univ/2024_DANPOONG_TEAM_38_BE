@@ -6,7 +6,9 @@ import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
+import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -54,6 +56,7 @@ public class ProjectConverter {
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
     }
+
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
         return ProjectDetailResponse.builder()
                 .id(project.getId())
@@ -66,6 +69,7 @@ public class ProjectConverter {
                 .teamDescription(project.getTeamDescription())
                 .build();
     }
+
     public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
         project.updateBasicInfo(
                 request.getMainTitle(),
@@ -82,5 +86,16 @@ public class ProjectConverter {
                 request.getStartDate(),
                 request.getEndDate()
         );
+    }
+
+    public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
+        return projects.map(project -> ProjectPreviewResponse.builder()
+                .image(project.getImage())
+                .mainTitle(project.getMainTitle())
+                .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .progress(project.getProgress().name())
+                .category(project.getCategory().getName())
+                .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
+                .build());
     }
 }
