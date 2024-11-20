@@ -69,8 +69,23 @@ public class ProjectConverter {
                 .teamDescription(project.getTeamDescription())
                 .build();
     }
-
-    public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
+    public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
+        project.updateBasicInfo(
+                request.getMainTitle(),
+                request.getSubTitle(),
+                imageUrl,
+                request.getCategory(),
+                request.getRegion(),
+                request.getAccount(),
+                request.getBudgetDescription(),
+                request.getScheduleDescription(),
+                request.getTeamDescription(),
+                request.getTargetAmount(),
+                request.getIntroduction(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+      public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())
                 .mainTitle(project.getMainTitle())

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -93,6 +94,31 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+
+    @Override
+    public void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+        if (!project.getUser().getId().equals(userId)) {
+            throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
+        }
+        String imageUrl = (image != null && !image.isEmpty())
+                ? s3Uploader.upload(image, "project-images")
+                : null;
+        projectConverter.updateEntity(project, request, imageUrl);
+        projectRepository.save(project);
+    }
+  
+    @Transactional
+    public void deleteProject(Long projectId) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+        if (!project.getUser().getId().equals(userId)) {
+            throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
+        }
+        projectRepository.delete(project);
 
     @Override
     public long getProjectCount(String getType) {
