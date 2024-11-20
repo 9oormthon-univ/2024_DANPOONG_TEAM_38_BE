@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +31,7 @@ public class BoostController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @ApiResponse(responseCode = "PROJECT400", description = "PROJECT_NOT_FOUND, 프로젝트가 존재하지 않습니다.")
     })
-    @GetMapping("")
+    @PostMapping("")
     public BaseResponse<?> boostCompany(@Parameter(name = "user", hidden = true) @AuthUser User user,
                                         BoostProjectRequest request) {
         Project project = projectService.findById(request.projectId());
