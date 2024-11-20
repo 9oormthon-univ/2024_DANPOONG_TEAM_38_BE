@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,13 @@ public class Proposal extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+
+    @Builder
+    public Proposal(String title, String file, String content, Project project) {
+        this.title = title;
+        this.content = content;
+        this.viewedAt = LocalDate.now();
+        this.file = file;
+        this.project = project;
+    }
 }
