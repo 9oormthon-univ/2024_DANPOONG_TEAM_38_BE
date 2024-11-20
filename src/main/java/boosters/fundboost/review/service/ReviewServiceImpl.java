@@ -1,7 +1,7 @@
 package boosters.fundboost.review.service;
 
 import boosters.fundboost.boost.domain.Boost;
-import boosters.fundboost.boost.reopsitory.BoostRepository;
+import boosters.fundboost.boost.repository.BoostRepository;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.repository.ProjectRepository;

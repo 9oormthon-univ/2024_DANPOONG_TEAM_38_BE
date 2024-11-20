@@ -1,5 +1,6 @@
 package boosters.fundboost.boost.domain;
 
+import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.user.domain.User;
