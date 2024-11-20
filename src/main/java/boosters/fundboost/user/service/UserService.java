@@ -6,12 +6,11 @@ import boosters.fundboost.user.dto.response.UserMyPageResponse;
 import org.springframework.data.domain.Page;
 
 public interface UserService {
-    User getUser(Long userId);
+    User getUser(String userEmail);
 
     UserMyPageResponse getMyPage(User user);
 
     Page<ProjectPreviewResponse> getFavProjects(Long userId, int page);
-    User findUserById(Long userId);
 
     Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page);
 }
