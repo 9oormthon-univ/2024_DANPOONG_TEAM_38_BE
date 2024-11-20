@@ -1,6 +1,7 @@
 package boosters.fundboost.review.controller;
 
 import boosters.fundboost.global.security.util.SecurityUtils;
+import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.review.service.ReviewService;
@@ -11,14 +12,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/projects/{projectId}/reviews")
+@RequestMapping("/api/projects/{projectId}/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Review 📝", description = "리뷰 관련 API")
 public class ReviewController {
@@ -51,4 +55,14 @@ public class ReviewController {
         ReviewResponseDto response = reviewService.createCompletionReview(projectId, userId, reviewRequestDto);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{reviewType}")
+    public ResponseEntity<List<ReviewResponseDto>> getProjectReviewsByType(
+            @PathVariable Long projectId,
+            @PathVariable ReviewType reviewType) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByProjectIdAndType(projectId, reviewType);
+        return ResponseEntity.ok(reviews);
+    }
+
 }
+

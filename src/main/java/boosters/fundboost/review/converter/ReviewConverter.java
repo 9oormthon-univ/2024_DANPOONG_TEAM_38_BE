@@ -19,14 +19,17 @@ public class ReviewConverter {
                 reviewType,
                 project,
                 user,
-                boost
+                null // boost 제거
         );
     }
 
     public ReviewResponseDto toResponseDto(Review review) {
         return new ReviewResponseDto(
                 review.getId(),
-                "리뷰가 성공적으로 등록되었습니다."
+                review.getTitle(),
+                review.getDescription(),
+                review.getUser() != null ? review.getUser().getName() : "Unknown Author",
+                review.getCreatedAt()
         );
     }
 }

@@ -18,6 +18,9 @@ import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
@@ -25,7 +28,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final BoostRepository boostRepository;
     private final ReviewConverter reviewConverter;
 
     @Override
@@ -36,14 +38,11 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ReviewException(ErrorStatus.REVIEW_USER_NOT_FOUND));
 
-        Boost boost = boostRepository.findByUserIdAndProjectId(userId, projectId)
-                .orElseThrow(() -> new ReviewException(ErrorStatus.REVIEW_BOOST_NOT_FOUND));
-
         ReviewType reviewType = user.getUserType() == UserType.COMPANY
                 ? ReviewType.COMPANY_REVIEW
                 : ReviewType.SUPPORTER_REVIEW;
 
-        Review review = reviewConverter.toEntity(reviewRequestDto, reviewType, project, user, boost);
+        Review review = reviewConverter.toEntity(reviewRequestDto, reviewType, project, user, null);
 
         reviewRepository.save(review);
 
@@ -73,4 +72,13 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewConverter.toResponseDto(review);
     }
+
+    @Override
+    public List<ReviewResponseDto> getReviewsByProjectIdAndType(Long projectId, ReviewType reviewType) {
+        List<Review> reviews = reviewRepository.findByProjectIdAndReviewType(projectId, reviewType);
+        return reviews.stream()
+                .map(reviewConverter::toResponseDto)
+                .collect(Collectors.toList());
+    }
 }
+
