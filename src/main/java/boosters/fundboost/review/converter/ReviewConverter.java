@@ -5,6 +5,7 @@ import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
+import boosters.fundboost.review.dto.response.MyReviewResponseDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.user.domain.User;
 import org.springframework.stereotype.Component;
@@ -44,5 +45,13 @@ public class ReviewConverter {
                 review.getCreatedAt(),
                 BigDecimal.ZERO
         );
+    }
+    public MyReviewResponseDto toMyReviewResponseDto(Review review) {
+        return MyReviewResponseDto.builder()
+                .author(review.getUser() != null ? review.getUser().getName() : "Unknown Author")
+                .profileImage(review.getUser() != null ? review.getUser().getImage() : null)
+                .createdAt(review.getCreatedAt())
+                .description(review.getDescription())
+                .build();
     }
 }

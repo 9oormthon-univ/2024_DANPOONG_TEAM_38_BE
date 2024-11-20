@@ -7,6 +7,7 @@ import boosters.fundboost.review.converter.ReviewConverter;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
+import boosters.fundboost.review.dto.response.MyReviewResponseDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.review.exception.ReviewException;
 import boosters.fundboost.review.repository.ReviewRepository;
@@ -87,5 +88,13 @@ public class ReviewServiceImpl implements ReviewService {
                 })
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<MyReviewResponseDto> getMyReviews(Long userId) {
+        List<Review> myReviews = reviewRepository.findByUserId(userId);
+        return myReviews.stream()
+                .map(reviewConverter::toMyReviewResponseDto)
+                .collect(Collectors.toList());
+    }
+
 }
 

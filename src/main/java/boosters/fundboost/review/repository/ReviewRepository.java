@@ -14,4 +14,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "WHERE r.project.id = :projectId AND r.reviewType = :reviewType")
     List<Object[]> findReviewsWithAmountByProjectIdAndType(@Param("projectId") Long projectId,
                                                            @Param("reviewType") ReviewType reviewType);
+    List<Review> findByUserId(Long userId);
 }

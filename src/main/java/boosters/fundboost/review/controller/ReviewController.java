@@ -3,6 +3,7 @@ package boosters.fundboost.review.controller;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
+import boosters.fundboost.review.dto.response.MyReviewResponseDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,6 +66,16 @@ public class ReviewController {
             @PathVariable ReviewType reviewType) {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByProjectIdAndType(projectId, reviewType);
         return ResponseEntity.ok(reviews);
+    }
+    @GetMapping("/my")
+    @Operation(summary = "내가 작성한 리뷰 조회 API", description = "로그인한 사용자가 작성한 리뷰를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ResponseEntity<List<MyReviewResponseDto>> getMyReviews() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        List<MyReviewResponseDto> myReviews = reviewService.getMyReviews(userId);
+        return ResponseEntity.ok(myReviews);
     }
 }
 
