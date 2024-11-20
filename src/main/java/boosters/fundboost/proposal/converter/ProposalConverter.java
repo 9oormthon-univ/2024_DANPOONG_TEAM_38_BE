@@ -7,12 +7,16 @@ import org.springframework.data.domain.Page;
 
 public class ProposalConverter {
     public static Page<ProposalResponse> toProposalPreviewResponse(Page<Proposal> proposals) {
-        return proposals.map(proposal -> ProposalResponse.builder()
+        return proposals.map(ProposalConverter::toProposalResponse);
+    }
+
+    public static ProposalResponse toProposalResponse(Proposal proposal) {
+        return ProposalResponse.builder()
                 .userName(proposal.getUser().getName())
-                .userName(proposal.getUser().getImage())
+                .image(proposal.getUser().getImage())
                 .title(proposal.getTitle())
                 .content(proposal.getContent())
                 .createdAt(PeriodUtil.localDateTimeToPeriodFormat(proposal.getCreatedAt()))
-                .build());
+                .build();
     }
 }
