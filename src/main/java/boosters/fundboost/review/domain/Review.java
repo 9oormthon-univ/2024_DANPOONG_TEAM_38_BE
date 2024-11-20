@@ -35,15 +35,16 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boost_id")
+    @JoinColumn(name = "boost_id",nullable = false)
     private Boost boost;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    public Review(String description, ReviewType reviewType, Project project, User user) {
+    public Review(String description, ReviewType reviewType, Project project, User user, Boost boost) {
         this.description = description;
         this.reviewType = reviewType;
         this.project = project;
         this.user = user;
+        this.boost = boost;
     }
 }

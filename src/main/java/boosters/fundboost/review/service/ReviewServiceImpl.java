@@ -1,5 +1,7 @@
 package boosters.fundboost.review.service;
 
+import boosters.fundboost.boost.domain.Boost;
+import boosters.fundboost.boost.reopsitory.BoostRepository;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.review.domain.Review;
@@ -8,6 +10,7 @@ import boosters.fundboost.review.dto.request.ReviewRequestDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.review.repository.ReviewRepository;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final BoostRepository boostRepository;
 
     @Override
     public ReviewResponseDto createProjectReview(Long projectId, Long userId, ReviewRequestDto reviewRequestDto) {
@@ -28,15 +32,25 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
+        Boost boost = boostRepository.findByUserIdAndProjectId(userId, projectId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트에 대한 사용자의 후원 기록이 없습니다."));
+
+        ReviewType reviewType;
+        if (user.getUserType() == UserType.COMPANY) {
+            reviewType = ReviewType.COMPANY_REVIEW;
+        } else {
+            reviewType = ReviewType.SUPPORTER_REVIEW;
+        }
+
         Review review = new Review(
                 reviewRequestDto.getDescription(),
-                ReviewType.COMPANY_REVIEW,
+                reviewType,
                 project,
-                user
+                user,
+                boost
         );
+        reviewRepository.save(review);
 
-        Review savedReview = reviewRepository.save(review);
-
-        return new ReviewResponseDto(savedReview.getId(), "리뷰가 성공적으로 등록되었습니다.");
+        return new ReviewResponseDto(review.getId(), "리뷰가 성공적으로 등록되었습니다.");
     }
 }
