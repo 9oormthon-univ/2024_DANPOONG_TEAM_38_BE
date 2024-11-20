@@ -44,4 +44,15 @@ public class UserController {
                                                                      @Parameter(name = "user", hidden = true) @AuthUser User user) {
         return BaseResponse.onSuccess(SuccessStatus._OK, userService.getFavProjects(user.getId(), page));
     }
+
+    @Operation(summary = "후원한 프로젝트 조회 API", description = "후원한 프로젝트를 조회 합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/boosts")
+    public BaseResponse<Page<ProjectPreviewResponse>> getBoostedProjects(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @Parameter(name = "user", hidden = true) @AuthUser User user) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, userService.getBoostedProjects(user.getId(), page));
+    }
 }

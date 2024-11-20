@@ -2,7 +2,7 @@ package boosters.fundboost.company.service;
 
 import boosters.fundboost.company.converter.CompanyRankingConverter;
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.dto.CompanyRankingRecord;
+import boosters.fundboost.company.dto.response.CompanyRankingRecord;
 import boosters.fundboost.company.dto.request.CompanyLoginRequest;
 import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;

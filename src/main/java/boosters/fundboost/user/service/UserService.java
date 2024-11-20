@@ -1,6 +1,5 @@
 package boosters.fundboost.user.service;
 
-
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
@@ -12,4 +11,7 @@ public interface UserService {
     UserMyPageResponse getMyPage(User user);
 
     Page<ProjectPreviewResponse> getFavProjects(Long userId, int page);
+    User findUserById(Long userId);
+
+    Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page);
 }

@@ -70,6 +70,24 @@ public class ProjectConverter {
                 .build();
     }
 
+    public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
+        project.updateBasicInfo(
+                request.getMainTitle(),
+                request.getSubTitle(),
+                imageUrl,
+                request.getCategory(),
+                request.getRegion(),
+                request.getAccount(),
+                request.getBudgetDescription(),
+                request.getScheduleDescription(),
+                request.getTeamDescription(),
+                request.getTargetAmount(),
+                request.getIntroduction(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+    }
+
     public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())

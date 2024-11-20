@@ -1,5 +1,9 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.boost.dto.BoostedInfoResponse;
+import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
+import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
@@ -13,6 +17,10 @@ import java.util.List;
 
 public interface ProjectService {
     void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image);
+
+    void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image);
+
+    void deleteProject(Long projectId);
 
     List<NewProjectResponse> getNewProjects();
 
@@ -31,4 +39,10 @@ public interface ProjectService {
     ProjectDetailResponse getProjectDetail(Long projectId);
 
     long getProjectCount(String getType);
+
+    Page<CompanyRankingPreviewResponse> getBoostedCompanyRanking(CompanyRankingPreviewRequest request);
+
+    Project findById(long projectId);
+
+    BoostedInfoResponse getBoostedInfo(Long projectId);
 }

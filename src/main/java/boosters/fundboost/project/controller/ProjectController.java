@@ -1,5 +1,8 @@
 package boosters.fundboost.project.controller;
 
+import boosters.fundboost.boost.dto.BoostedInfoResponse;
+import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +32,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping(consumes = {"multipart/form-data" })
+    @PostMapping(consumes = {"multipart/form-data"})
     @Operation(summary = "프로젝트 생성 API", description = "프로젝트 기본 정보, 펀딩계획, 프로젝트 계획, 창작자 정보를 등록합니다")
     public BaseResponse<String> createProject(@ModelAttribute ProjectBasicInfoRequest request) {
         projectService.registerBasicInfo(request, request.getImage());
@@ -108,6 +112,28 @@ public class ProjectController {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectDetail(projectId));
     }
 
+    @Operation(summary = "프로젝트 수정 API", description = "프로젝트 기본 정보 및 관련 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @PutMapping(value = "/{projectId}", consumes = {"multipart/form-data"})
+    public BaseResponse<String> updateProject(
+            @PathVariable Long projectId,
+            @ModelAttribute ProjectBasicInfoRequest request) {
+        projectService.updateProject(projectId, request, request.getImage());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 수정되었습니다.");
+    }
+
+    @Operation(summary = "프로젝트 삭제 API", description = "로그인한 사용자가 등록한 프로젝트만 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+    })
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable Long projectId) {
+        projectService.deleteProject(projectId);
+        return ResponseEntity.ok("프로젝트가 성공적으로 삭제되었습니다.");
+    }
+
     @Operation(summary = "누적 프로젝트 및 신규 프로젝트 수 조회 API",
             description = "누적 프로젝트 및 신규 프로젝트 수를 조회합니다. 누적은 all, 신규는 new 를 파라미터 값으로 받습니다. _숙희")
     @ApiResponses(value = {
@@ -119,4 +145,23 @@ public class ProjectController {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectCount(getType));
     }
 
+    @Operation(summary = "후원한 프로젝트 기업 랭킹 조회 API", description = "해당 프로젝트를 후원한 기업 랭킹을 조회합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/boosted-ranking")
+    public BaseResponse<Page<CompanyRankingPreviewResponse>> getBoostedCompanyRanking(CompanyRankingPreviewRequest request) {
+        Page<CompanyRankingPreviewResponse> companies = projectService.getBoostedCompanyRanking(request);
+        return BaseResponse.onSuccess(SuccessStatus._OK, companies);
+    }
+
+    @Operation(summary = "프로젝트의 후원 정보 조회 API", description = "프로젝트의 후원 정보를 조회합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @ApiResponse(responseCode = "PROJECT400", description = "PROJECT_NOT_FOUND, 프로젝트를 찾을 수 없습니다.")
+    })
+    @GetMapping("/boosted-info")
+    public BaseResponse<BoostedInfoResponse> getBoostedInfo(@RequestParam(name = "projectId") Long projectId) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getBoostedInfo(projectId));
+    }
 }

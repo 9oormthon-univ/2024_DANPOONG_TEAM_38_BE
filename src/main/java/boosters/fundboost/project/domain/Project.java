@@ -67,7 +67,7 @@ public class Project extends BaseEntity {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Boost> boosts;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -108,4 +108,25 @@ public class Project extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    public void updateBasicInfo(String mainTitle, String subTitle, String image, ProjectCategory category, Region region,
+                                String account, String budgetDescription, String scheduleDescription,
+                                String teamDescription, Long targetAmount, String introduction, LocalDate startDate,
+                                LocalDate endDate) {
+        if (image != null && !image.isEmpty()) {
+            this.image = image;
+        }
+        this.mainTitle = mainTitle;
+        this.subTitle = subTitle;
+        this.category = category;
+        this.region = region;
+        this.account = account;
+        this.budgetDescription = budgetDescription;
+        this.scheduleDescription = scheduleDescription;
+        this.teamDescription = teamDescription;
+        this.targetAmount = targetAmount;
+        this.introduction = introduction;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
 }

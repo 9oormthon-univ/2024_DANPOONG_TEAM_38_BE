@@ -3,7 +3,7 @@ package boosters.fundboost.company.repository;
 import java.util.LinkedHashMap;
 
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.dto.CompanyRankingRecord;
+import boosters.fundboost.company.dto.response.CompanyRankingRecord;
 import boosters.fundboost.global.common.domain.enums.SortType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.response.exception.GeneralException;
@@ -66,7 +66,7 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
         return queryFactory
                 .select(company, boost.amount.sum(), boost.count())
                 .from(boost)
-                .join(boost.company, company)
+                .join(boost.user.company, company)
                 .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay()))
                 .groupBy(company.id)
                 .orderBy(numberExpression.desc())
@@ -79,7 +79,6 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(company),
                         tuple -> CompanyRankingRecord.from(
-                                tuple.get(company),
                                 Optional.ofNullable(tuple.get(boost.amount.sum())).orElse(0L),
                                 Optional.ofNullable(tuple.get(boost.count())).orElse(0L)
                         ),
