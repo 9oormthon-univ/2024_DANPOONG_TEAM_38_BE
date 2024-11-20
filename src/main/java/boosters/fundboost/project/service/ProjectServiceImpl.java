@@ -95,25 +95,10 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getUser().getId().equals(userId)) {
             throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
         }
-        String imageUrl = null;
-        if (image != null && !image.isEmpty()) {
-            imageUrl = s3Uploader.upload(image, "project-images");
-        }
-        project.updateBasicInfo(
-                request.getMainTitle(),
-                request.getSubTitle(),
-                imageUrl,
-                request.getCategory(),
-                request.getRegion(),
-                request.getAccount(),
-                request.getBudgetDescription(),
-                request.getScheduleDescription(),
-                request.getTeamDescription(),
-                request.getTargetAmount(),
-                request.getIntroduction(),
-                request.getStartDate(),
-                request.getEndDate()
-        );
+        String imageUrl = (image != null && !image.isEmpty())
+                ? s3Uploader.upload(image, "project-images")
+                : null;
+        projectConverter.updateEntity(project, request, imageUrl);
         projectRepository.save(project);
     }
     @Transactional
