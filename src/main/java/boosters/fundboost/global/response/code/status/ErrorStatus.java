@@ -27,9 +27,8 @@ public enum ErrorStatus implements BaseErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PROJECT400", "프로젝트를 찾을 수 없습니다."),
     PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "PROJECT401", "이미 존재하는 프로젝트입니다."),
     PROJECT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PROJECT402", "프로젝트에 대한 접근이 금지되었습니다."),
-
     UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "PROJECT403", "해당 프로젝트를 수정할 권한이 없습니다.");
-    ;
+  ;
 
     private final HttpStatus httpStatus;
     private final String code;

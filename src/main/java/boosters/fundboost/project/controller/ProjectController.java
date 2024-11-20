@@ -120,6 +120,7 @@ public class ProjectController {
         projectService.updateProject(projectId, request, request.getImage());
         return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 수정되었습니다.");
     }
+  
     @Operation(summary = "프로젝트 삭제 API", description = "로그인한 사용자가 등록한 프로젝트만 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -140,5 +141,4 @@ public class ProjectController {
     public BaseResponse<Long> getProjectCount(@RequestParam(name = "getType") String getType) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectCount(getType));
     }
-
 }
