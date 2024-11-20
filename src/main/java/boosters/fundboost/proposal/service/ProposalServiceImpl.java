@@ -4,8 +4,6 @@ import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.company.service.CompanyService;
 import boosters.fundboost.global.common.domain.enums.UploadType;
 import boosters.fundboost.global.uploader.S3UploaderService;
-import boosters.fundboost.project.domain.Project;
-import boosters.fundboost.project.service.ProjectService;
 import boosters.fundboost.proposal.converter.ProposalConverter;
 import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.proposal.dto.response.ProposalPreviewResponse;
@@ -26,21 +24,19 @@ import java.util.Optional;
 public class ProposalServiceImpl implements ProposalService {
     private static final int PAGE_SIZE = 4;
     private final ProposalRepository proposalRepository;
-    private final ProjectService projectService;
     private final CompanyService companyService;
     private final S3UploaderService s3UploaderService;
 
     @Override
     @Transactional
     public void writeProposal(User user, ProposalRequest request) {
-        Project project = projectService.findById(request.getProjectId());
         Company company = companyService.findById(request.getCompanyId());
         String fileUrl = Optional.ofNullable(request.getFile())
                 .filter(image -> !image.isEmpty())
                 .map(image -> s3UploaderService.uploadFile(image, UploadType.FILE.getDirectory()))
                 .orElse(null);
 
-        Proposal proposal = createProposal(project, request, fileUrl, company);
+        Proposal proposal = createProposal(user, request, fileUrl, company);
 
         proposalRepository.save(proposal);
     }
@@ -54,7 +50,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     private Proposal createProposal(User user, ProposalRequest request, String file, Company company) {
         return Proposal.builder()
-                .project(project)
+                .user(user)
                 .title(request.getTitle())
                 .content(request.getContent())
                 .company(company)
