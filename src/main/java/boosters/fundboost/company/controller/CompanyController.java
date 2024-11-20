@@ -1,11 +1,9 @@
 package boosters.fundboost.company.controller;
 
 import boosters.fundboost.company.dto.request.CompanyLoginRequest;
-import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;
 import boosters.fundboost.company.dto.response.CompanyLoginResponse;
-import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.company.dto.response.CompanyRankingResponse;
 import boosters.fundboost.company.service.CompanyService;
 import boosters.fundboost.global.response.BaseResponse;
@@ -16,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,16 +69,6 @@ public class CompanyController {
     @GetMapping("/ranking")
     public BaseResponse<List<CompanyRankingResponse>> getRanking(CompanyRankingRequest companyRankingRequest) {
         List<CompanyRankingResponse> companies = companyService.getRanking(companyRankingRequest);
-        return BaseResponse.onSuccess(SuccessStatus._OK, companies);
-    }
-
-    @Operation(summary = "후원한 프로젝트 기업 랭킹 조회 API", description = "해당 프로젝트를 후원한 기업 랭킹을 조회합니다._숙희")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-    })
-    @GetMapping("/boosted-ranking")
-    public BaseResponse<Page<CompanyRankingPreviewResponse>> getBoostedCompanyRanking(CompanyRankingPreviewRequest request) {
-        Page<CompanyRankingPreviewResponse> companies = companyService.getBoostedCompanyRanking(request);
         return BaseResponse.onSuccess(SuccessStatus._OK, companies);
     }
 }

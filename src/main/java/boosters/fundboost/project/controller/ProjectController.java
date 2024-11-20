@@ -1,5 +1,7 @@
 package boosters.fundboost.project.controller;
 
+import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
@@ -140,5 +142,15 @@ public class ProjectController {
     @GetMapping("/count")
     public BaseResponse<Long> getProjectCount(@RequestParam(name = "getType") String getType) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectCount(getType));
+    }
+
+    @Operation(summary = "후원한 프로젝트 기업 랭킹 조회 API", description = "해당 프로젝트를 후원한 기업 랭킹을 조회합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/boosted-ranking")
+    public BaseResponse<Page<CompanyRankingPreviewResponse>> getBoostedCompanyRanking(CompanyRankingPreviewRequest request) {
+        Page<CompanyRankingPreviewResponse> companies = projectService.getBoostedCompanyRanking(request);
+        return BaseResponse.onSuccess(SuccessStatus._OK, companies);
     }
 }
