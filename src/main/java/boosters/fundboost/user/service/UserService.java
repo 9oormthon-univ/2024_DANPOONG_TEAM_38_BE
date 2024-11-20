@@ -1,6 +1,5 @@
 package boosters.fundboost.user.service;
 
-
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;

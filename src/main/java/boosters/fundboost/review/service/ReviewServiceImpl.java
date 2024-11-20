@@ -4,6 +4,7 @@ import boosters.fundboost.boost.domain.Boost;
 import boosters.fundboost.boost.reopsitory.BoostRepository;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.repository.ProjectRepository;
+import boosters.fundboost.review.converter.ReviewConverter;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
@@ -23,6 +24,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final BoostRepository boostRepository;
+    private final ReviewConverter reviewConverter;
 
     @Override
     public ReviewResponseDto createProjectReview(Long projectId, Long userId, ReviewRequestDto reviewRequestDto) {
@@ -35,22 +37,14 @@ public class ReviewServiceImpl implements ReviewService {
         Boost boost = boostRepository.findByUserIdAndProjectId(userId, projectId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트에 대한 사용자의 후원 기록이 없습니다."));
 
-        ReviewType reviewType;
-        if (user.getUserType() == UserType.COMPANY) {
-            reviewType = ReviewType.COMPANY_REVIEW;
-        } else {
-            reviewType = ReviewType.SUPPORTER_REVIEW;
-        }
+        ReviewType reviewType = user.getUserType() == UserType.COMPANY
+                ? ReviewType.COMPANY_REVIEW
+                : ReviewType.SUPPORTER_REVIEW;
 
-        Review review = new Review(
-                reviewRequestDto.getDescription(),
-                reviewType,
-                project,
-                user,
-                boost
-        );
+        Review review = reviewConverter.toEntity(reviewRequestDto, reviewType, project, user, boost);
+
         reviewRepository.save(review);
 
-        return new ReviewResponseDto(review.getId(), "리뷰가 성공적으로 등록되었습니다.");
+        return reviewConverter.toResponseDto(review);
     }
 }
