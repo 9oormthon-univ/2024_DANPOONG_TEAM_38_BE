@@ -29,7 +29,7 @@ public class Boost extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id", nullable = true)
     private Company company;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
