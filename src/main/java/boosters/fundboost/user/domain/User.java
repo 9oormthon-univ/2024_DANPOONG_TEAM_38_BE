@@ -8,6 +8,7 @@ import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
+import boosters.fundboost.user.dto.request.ProfileEditRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -58,5 +59,20 @@ public class User extends BaseEntity {
         this.title = title;
         this.content = content;
         this.tag = tag;
+    }
+
+    public void updateUser(ProfileEditRequest request, String image) {
+        if (request.getLink() != null) {
+            this.link = request.getLink();
+        }
+        if (request.getIntroduceTitle() != null) {
+            this.title = request.getIntroduceTitle();
+        }
+        if (request.getIntroduceContent() != null) {
+            this.content = request.getIntroduceContent();
+        }
+        if (image != null) {
+            this.image = image;
+        }
     }
 }
