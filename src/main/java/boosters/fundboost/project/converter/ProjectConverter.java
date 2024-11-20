@@ -69,10 +69,7 @@ public class ProjectConverter {
                 .teamDescription(project.getTeamDescription())
                 .build();
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> a71a83d2fc1c5c64b86ea09e8ed0e03903b96775
     public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
         project.updateBasicInfo(
                 request.getMainTitle(),
@@ -89,13 +86,9 @@ public class ProjectConverter {
                 request.getStartDate(),
                 request.getEndDate()
         );
-<<<<<<< HEAD
     }
 
     public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
-=======
-      public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
->>>>>>> a71a83d2fc1c5c64b86ea09e8ed0e03903b96775
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())
                 .mainTitle(project.getMainTitle())

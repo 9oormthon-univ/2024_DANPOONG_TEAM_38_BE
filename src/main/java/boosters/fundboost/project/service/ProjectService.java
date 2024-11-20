@@ -13,11 +13,7 @@ import java.util.List;
 
 public interface ProjectService {
     void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image);
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> a71a83d2fc1c5c64b86ea09e8ed0e03903b96775
     void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image);
   
     void deleteProject(Long projectId);
