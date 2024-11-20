@@ -1,5 +1,6 @@
 package boosters.fundboost.user.service;
 
+import boosters.fundboost.boost.service.BoostService;
 import boosters.fundboost.follow.service.FollowService;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.like.service.LikeService;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FollowService followService;
     private final LikeService likeService;
+    private final BoostService boostService;
 
     @Override
     public User getUser(Long userId) {
@@ -41,6 +43,14 @@ public class UserServiceImpl implements UserService {
     public Page<ProjectPreviewResponse> getFavProjects(Long userId, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Project> projects = likeService.getLikeProjects(userId, pageable);
+
+        return ProjectConverter.toProjectPreviewResponse(projects);
+    }
+
+    @Override
+    public Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        Page<Project> projects = boostService.getBoostedProjects(userId, pageable);
 
         return ProjectConverter.toProjectPreviewResponse(projects);
     }

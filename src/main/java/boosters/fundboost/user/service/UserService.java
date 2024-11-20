@@ -12,4 +12,6 @@ public interface UserService {
     UserMyPageResponse getMyPage(User user);
 
     Page<ProjectPreviewResponse> getFavProjects(Long userId, int page);
+
+    Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page);
 }

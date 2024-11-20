@@ -109,7 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectConverter.updateEntity(project, request, imageUrl);
         projectRepository.save(project);
     }
-  
+
     @Transactional
     public void deleteProject(Long projectId) {
         Long userId = SecurityUtils.getCurrentUserId();
@@ -119,6 +119,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
         }
         projectRepository.delete(project);
+    }
 
     @Override
     public long getProjectCount(String getType) {
