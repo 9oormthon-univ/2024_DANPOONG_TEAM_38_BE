@@ -48,6 +48,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findUserById(Long userId) {
+        return getUser(userId);
     public Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Project> projects = boostService.getBoostedProjects(userId, pageable);
