@@ -157,4 +157,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         return new PageImpl<>(responses, pageable, companies.getTotalElements());
     }
+
+    @Override
+    public Project findById(long projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+    }
 }
