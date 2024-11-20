@@ -1,5 +1,6 @@
 package boosters.fundboost.proposal.domain;
 
+import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.project.domain.Project;
 import jakarta.persistence.Column;
@@ -32,13 +33,17 @@ public class Proposal extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
     @Builder
-    public Proposal(String title, String file, String content, Project project) {
+    public Proposal(String title, String file, String content, Project project, Company company) {
         this.title = title;
         this.content = content;
         this.viewedAt = LocalDate.now();
         this.file = file;
         this.project = project;
+        this.company = company;
     }
 }
