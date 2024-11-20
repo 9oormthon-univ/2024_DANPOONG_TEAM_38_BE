@@ -69,6 +69,7 @@ public class ProjectConverter {
                 .teamDescription(project.getTeamDescription())
                 .build();
     }
+
     public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
         project.updateBasicInfo(
                 request.getMainTitle(),
@@ -85,7 +86,9 @@ public class ProjectConverter {
                 request.getStartDate(),
                 request.getEndDate()
         );
-      public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
+    }
+
+    public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())
                 .mainTitle(project.getMainTitle())
