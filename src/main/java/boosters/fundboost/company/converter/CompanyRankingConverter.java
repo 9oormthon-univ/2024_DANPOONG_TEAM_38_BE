@@ -14,7 +14,7 @@ public class CompanyRankingConverter {
                 .image(company.getUser().getImage())
                 .category(company.getCategory().getName())
                 .contributionAmount(companyRankingRecord.contributionAmount())
-                .contributionCount(companyRankingRecord.countributionCount())
+                .contributionCount(companyRankingRecord.contributionCount())
                 .build();
     }
 }
