@@ -2,7 +2,10 @@ package boosters.fundboost.company.service;
 
 import boosters.fundboost.company.converter.CompanyRankingConverter;
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.dto.CompanyRankingRecord;
+import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewRecord;
+import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
+import boosters.fundboost.company.dto.response.CompanyRankingRecord;
 import boosters.fundboost.company.dto.request.CompanyLoginRequest;
 import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;
@@ -13,17 +16,26 @@ import boosters.fundboost.global.security.jwt.JwtTokenProvider;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.repository.UserRepository;
+import com.querydsl.core.Tuple;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
+    private final static int PAGE_SIZE = 3;
+    private final static int COMPANY_RANKING_INDEX = 0;
+    private final static int CONTRIBUTION_AMOUNT_INDEX = 1;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
@@ -119,5 +131,19 @@ public class CompanyService {
         return companies.entrySet().stream()
                 .map(entry -> CompanyRankingConverter.toCompanyRankingResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    public Page<CompanyRankingPreviewResponse> getBoostedCompanyRanking(CompanyRankingPreviewRequest request) {
+        Pageable pageable = PageRequest.of(request.page(), PAGE_SIZE);
+        Page<Tuple> companies = companyRepository.findBoostedCompanies(request.projectId(), pageable);
+
+        List<CompanyRankingPreviewResponse> responses = companies.getContent().stream()
+                .map(tuple -> CompanyRankingConverter.toCompanyRankingPreviewResponse(
+                        Objects.requireNonNull(tuple.get(COMPANY_RANKING_INDEX, Company.class)),
+                        new CompanyRankingPreviewRecord(tuple.get(CONTRIBUTION_AMOUNT_INDEX, Long.class))
+                ))
+                .toList();
+
+        return new PageImpl<>(responses, pageable, companies.getTotalElements());
     }
 }

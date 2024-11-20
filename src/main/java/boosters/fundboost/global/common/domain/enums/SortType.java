@@ -3,7 +3,7 @@ package boosters.fundboost.global.common.domain.enums;
 public enum SortType {
     WEEKLY("weekly"),
     MONTHLY("monthly"),
-    ALLTIME("alltime"),
+    ALLTIME("allTime"),
     PROJECTS("projects");
     private final String value;
 
