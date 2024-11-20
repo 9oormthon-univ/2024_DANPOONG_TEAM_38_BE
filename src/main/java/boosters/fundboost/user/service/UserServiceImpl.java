@@ -3,12 +3,14 @@ package boosters.fundboost.user.service;
 import boosters.fundboost.boost.service.BoostService;
 import boosters.fundboost.follow.service.FollowService;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
+import boosters.fundboost.global.uploader.S3UploaderService;
 import boosters.fundboost.like.service.LikeService;
 import boosters.fundboost.project.converter.ProjectConverter;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.converter.UserMyPageConverter;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.dto.request.ProfileEditRequest;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
 import boosters.fundboost.user.exception.UserException;
 import boosters.fundboost.user.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final FollowService followService;
     private final LikeService likeService;
     private final BoostService boostService;
+    private final S3UploaderService s3UploaderService;
 
     @Override
     public User getUser(String userEmail) {
@@ -53,5 +57,12 @@ public class UserServiceImpl implements UserService {
         Page<Project> projects = boostService.getBoostedProjects(userId, pageable);
 
         return ProjectConverter.toProjectPreviewResponse(projects);
+    }
+
+    @Override
+    @Transactional
+    public void editProfile(User user, ProfileEditRequest request) {
+        String imageUrl = s3UploaderService.upload(request.getImage());
+        user.updateUser(request, imageUrl);
     }
 }
