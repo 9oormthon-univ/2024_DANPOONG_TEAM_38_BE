@@ -172,4 +172,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         return BoostedInfoConverter.toBoostedInfoResponse(project, achievementAmount, boostedUserCount);
     }
+
+    @Override
+    public Project findById(long projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+    }
 }
