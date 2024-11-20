@@ -23,16 +23,20 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN402","유효하지 않은 토큰입니다."),
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER400", "유저를 찾을 수 없습니다."),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "USER401", "인증되지 않은 유저입니다."),
     // PROJECT
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PROJECT400", "프로젝트를 찾을 수 없습니다."),
     PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "PROJECT401", "이미 존재하는 프로젝트입니다."),
     PROJECT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PROJECT402", "프로젝트에 대한 접근이 금지되었습니다."),
     UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "PROJECT403", "해당 프로젝트를 수정할 권한이 없습니다."),
+    //FOLLOW
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW400", "팔로우를 기록을 찾을 수 없습니다."),
+    FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "FOLLOW401", "자신과 팔로우 관계를 가질 수 없습니다."),
     // REVIEW
     REVIEW_PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW400", "유효하지 않은 프로젝트 ID입니다."),
     REVIEW_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW401", "유효하지 않은 사용자입니다."),
     REVIEW_BOOST_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW402", "해당 프로젝트에 대한 사용자의 후원 기록이 없습니다."),
-    REVIEW_UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "REVIEW403", "마감후기는 프로젝트 등록자만 작성할 수 있습니다.");
+    REVIEW_UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "REVIEW403", "마감후기는 프로젝트 등록자만 작성할 수 있습니다."),
     ;
 
     private final HttpStatus httpStatus;
