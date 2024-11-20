@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProposalPreviewResponse {
+public class ProposalResponse {
     private String userName;
     private String image;
     private String title;

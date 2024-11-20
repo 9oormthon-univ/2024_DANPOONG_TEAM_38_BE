@@ -3,7 +3,7 @@ package boosters.fundboost.proposal.controller;
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.global.security.handler.annotation.AuthUser;
-import boosters.fundboost.proposal.dto.response.ProposalPreviewResponse;
+import boosters.fundboost.proposal.dto.response.ProposalResponse;
 import boosters.fundboost.proposal.service.ProposalService;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.request.ProposalRequest;
@@ -47,7 +47,7 @@ public class ProposalController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     @GetMapping("")
-    public BaseResponse<Page<ProposalPreviewResponse>> getProposals(
+    public BaseResponse<Page<ProposalResponse>> getProposals(
             @Parameter(name = "user", hidden = true) @AuthUser User user,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
         return BaseResponse.onSuccess(SuccessStatus._OK, proposalService.getProposals(user, page));
