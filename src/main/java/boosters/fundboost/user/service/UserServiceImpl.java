@@ -2,6 +2,7 @@ package boosters.fundboost.user.service;
 
 import boosters.fundboost.boost.service.BoostService;
 import boosters.fundboost.follow.service.FollowService;
+import boosters.fundboost.global.common.domain.enums.UploadType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.uploader.S3UploaderService;
 import boosters.fundboost.like.service.LikeService;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +65,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void editProfile(User user, ProfileEditRequest request) {
-        String imageUrl = s3UploaderService.upload(request.getImage());
+        String imageUrl = Optional.ofNullable(request.getImage())
+                .filter(image -> !image.isEmpty())
+                .map(image -> s3UploaderService.uploadImage(image, UploadType.IMAGE.getDirectory()))
+                .orElse(null);
+
         user.updateUser(request, imageUrl);
     }
 }
