@@ -14,20 +14,18 @@ public class ReviewConverter {
 
     public Review toEntity(ReviewRequestDto dto, ReviewType reviewType, Project project, User user, Boost boost) {
         return new Review(
-                dto.getTitle(),          // 마감 후기 제목
-                dto.getDescription(),    // 리뷰 설명
-                reviewType,              // 리뷰 타입
-                project,                 // 프로젝트
-                user,                    // 사용자
-                boost                    // Boost 객체
+                dto.getTitle(),
+                dto.getDescription(),
+                reviewType,
+                project,
+                user,
+                boost
         );
     }
 
-
-    // Entity -> Response DTO 변환
     public ReviewResponseDto toResponseDto(Review review) {
         return new ReviewResponseDto(
-                review.getId(),         // 리뷰 ID
+                review.getId(),
                 "리뷰가 성공적으로 등록되었습니다."
         );
     }
