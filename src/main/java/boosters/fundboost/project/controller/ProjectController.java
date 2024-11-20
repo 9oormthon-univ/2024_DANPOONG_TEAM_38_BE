@@ -2,7 +2,6 @@ package boosters.fundboost.project.controller;
 
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
-import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
@@ -30,7 +29,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(consumes = {"multipart/form-data" })
     @Operation(summary = "프로젝트 생성 API", description = "프로젝트 기본 정보, 펀딩계획, 프로젝트 계획, 창작자 정보를 등록합니다")
     public BaseResponse<String> createProject(@ModelAttribute ProjectBasicInfoRequest request) {
         projectService.registerBasicInfo(request, request.getImage());
@@ -45,6 +44,7 @@ public class ProjectController {
     public BaseResponse<List<NewProjectResponse>> getNewProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getNewProjects());
     }
+
     @Operation(summary = "카테고리별 프로젝트 조회 API", description = "특정 카테고리에 해당하는 프로젝트를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -71,6 +71,7 @@ public class ProjectController {
     public BaseResponse<List<NewProjectResponse>> getPopularProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getPopularProjects());
     }
+
     @Operation(summary = "기업 펀딩 프로젝트 조회 API", description = "상태가 기업펀딩인 프로젝트를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공")
@@ -79,6 +80,7 @@ public class ProjectController {
     public BaseResponse<List<NewProjectResponse>> getCorporateFundingProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getCorporateFundingProjects());
     }
+
     @Operation(summary = "전체 등록 프로젝트 조회 API", description = "전체 프로젝트를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
@@ -88,6 +90,7 @@ public class ProjectController {
         Page<NewProjectResponse> response = projectService.getAllProjects(pageable);
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
+
     @Operation(summary = "로그인 사용자 프로젝트 조회 API", description = "로그인한 사용자가 등록한 프로젝트만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -96,6 +99,7 @@ public class ProjectController {
     public BaseResponse<List<NewProjectResponse>> getUserProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getUserProjects());
     }
+
     @Operation(summary = "프로젝트 상세 조회 API", description = "프로젝트 ID로 특정 프로젝트를 상세 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -104,6 +108,7 @@ public class ProjectController {
     public BaseResponse<ProjectDetailResponse> getProjectDetail(@PathVariable Long projectId) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectDetail(projectId));
     }
+  
     @Operation(summary = "프로젝트 수정 API", description = "프로젝트 기본 정보 및 관련 정보를 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -115,6 +120,7 @@ public class ProjectController {
         projectService.updateProject(projectId, request, request.getImage());
         return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 수정되었습니다.");
     }
+  
     @Operation(summary = "프로젝트 삭제 API", description = "로그인한 사용자가 등록한 프로젝트만 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
@@ -123,5 +129,16 @@ public class ProjectController {
     public ResponseEntity<String> deleteProject(@PathVariable Long projectId) {
         projectService.deleteProject(projectId);
         return ResponseEntity.ok("프로젝트가 성공적으로 삭제되었습니다.");
+    }
+  
+    @Operation(summary = "누적 프로젝트 및 신규 프로젝트 수 조회 API",
+            description = "누적 프로젝트 및 신규 프로젝트 수를 조회합니다. 누적은 all, 신규는 new 를 파라미터 값으로 받습니다. _숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK, 성공"),
+            @ApiResponse(responseCode = "400", description = "INVALID_PARAMETER, 파라미터 값이 잘못되었습니다."),
+    })
+    @GetMapping("/count")
+    public BaseResponse<Long> getProjectCount(@RequestParam(name = "getType") String getType) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getProjectCount(getType));
     }
 }

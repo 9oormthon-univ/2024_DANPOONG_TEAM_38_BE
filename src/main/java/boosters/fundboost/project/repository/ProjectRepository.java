@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
@@ -31,4 +32,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findAllProjects(Pageable pageable);
     @Query("SELECT p FROM Project p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Project> findByUserId(@Param("userId") Long userId);
+    long countByCreatedAtAfter(LocalDateTime date);
 }
