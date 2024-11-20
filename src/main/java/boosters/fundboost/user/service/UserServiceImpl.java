@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     private final BoostService boostService;
 
     @Override
-    public User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+    public User getUser(String userEmail) {
+        return userRepository.findByEmail(userEmail).orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
     }
 
     @Override
