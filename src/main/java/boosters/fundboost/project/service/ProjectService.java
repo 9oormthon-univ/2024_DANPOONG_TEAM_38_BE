@@ -13,12 +13,22 @@ import java.util.List;
 
 public interface ProjectService {
     void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image);
+
     List<NewProjectResponse> getNewProjects();
+
     List<NewProjectResponse> getProjectsByCategory(ProjectCategory category);
+
     List<NewProjectResponse> getProjectsByRegion(Region region);
+
     List<NewProjectResponse> getPopularProjects();
+
     List<NewProjectResponse> getCorporateFundingProjects();
+
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
+
     List<NewProjectResponse> getUserProjects();
+
     ProjectDetailResponse getProjectDetail(Long projectId);
+
+    long getProjectCount(String getType);
 }
