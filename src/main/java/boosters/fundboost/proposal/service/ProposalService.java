@@ -9,4 +9,6 @@ public interface ProposalService {
     void writeProposal(User user, ProposalRequest request);
 
     Page<ProposalResponse> getProposals(User user, int page);
+
+    ProposalResponse getProposal(Long id);
 }
