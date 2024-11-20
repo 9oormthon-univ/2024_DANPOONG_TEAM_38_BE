@@ -43,7 +43,7 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public void unfollowUser(User user, long unFollowedUser) {
         Follow follow = followRepository
-                .findFollowByFollowerIdAndAndFollowingId(user.getId(), unFollowedUser)
+                .findFollowByFollowerIdAndFollowingId(user.getId(), unFollowedUser)
                 .orElseThrow(() -> new FollowException(ErrorStatus.FOLLOW_NOT_FOUND));
 
         followRepository.delete(follow);
