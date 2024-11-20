@@ -1,7 +1,7 @@
 package boosters.fundboost.company.converter;
 
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.dto.CompanyRankingRecord;
+import boosters.fundboost.company.dto.response.CompanyRankingRecord;
 import boosters.fundboost.company.dto.response.CompanyRankingResponse;
 
 
