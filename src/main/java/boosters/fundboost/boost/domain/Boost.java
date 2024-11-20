@@ -1,6 +1,5 @@
 package boosters.fundboost.boost.domain;
 
-import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.user.domain.User;
@@ -34,4 +33,12 @@ public class Boost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public static Boost of(User user, Project project, Long amount) {
+        Boost boost = new Boost();
+        boost.user = user;
+        boost.project = project;
+        boost.amount = amount;
+        return boost;
+    }
 }

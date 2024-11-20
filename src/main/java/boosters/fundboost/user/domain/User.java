@@ -1,5 +1,6 @@
 package boosters.fundboost.user.domain;
 
+import boosters.fundboost.boost.domain.Boost;
 import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.follow.domain.Follow;
 import boosters.fundboost.global.common.domain.BaseEntity;
@@ -44,6 +45,8 @@ public class User extends BaseEntity {
     private List<Project> projects;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Boost> boosts;
 
     @Builder
     public User(String name, String email, String image, UserType userType, String link, String title, String content, Tag tag) {
