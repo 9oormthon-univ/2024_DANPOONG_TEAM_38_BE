@@ -30,4 +30,12 @@ public class Boost extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public static Boost of(User user, Project project, Long amount) {
+        Boost boost = new Boost();
+        boost.user = user;
+        boost.project = project;
+        boost.amount = amount;
+        return boost;
+    }
 }
