@@ -37,6 +37,8 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW401", "유효하지 않은 사용자입니다."),
     REVIEW_BOOST_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW402", "해당 프로젝트에 대한 사용자의 후원 기록이 없습니다."),
     REVIEW_UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "REVIEW403", "마감후기는 프로젝트 등록자만 작성할 수 있습니다."),
+    // S3
+    INVALID_EXTENSION(HttpStatus.BAD_REQUEST, "S3400", "지원하지 않는 확장자입니다."),
     ;
 
     private final HttpStatus httpStatus;
