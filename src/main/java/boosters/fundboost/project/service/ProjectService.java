@@ -1,5 +1,6 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.boost.dto.BoostedInfoResponse;
 import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
@@ -39,4 +40,6 @@ public interface ProjectService {
     long getProjectCount(String getType);
 
     Page<CompanyRankingPreviewResponse> getBoostedCompanyRanking(CompanyRankingPreviewRequest request);
+
+    BoostedInfoResponse getBoostedInfo(Long projectId);
 }

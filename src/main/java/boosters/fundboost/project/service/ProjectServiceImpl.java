@@ -1,5 +1,8 @@
 package boosters.fundboost.project.service;
 
+import boosters.fundboost.boost.converter.BoostedInfoConverter;
+import boosters.fundboost.boost.dto.BoostedInfoResponse;
+import boosters.fundboost.boost.repository.BoostRepository;
 import boosters.fundboost.company.converter.CompanyRankingConverter;
 import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
@@ -44,6 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final static int CONTRIBUTION_AMOUNT_INDEX = 1;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final BoostRepository boostRepository;
     private final S3Uploader s3Uploader;
     private final ProjectConverter projectConverter;
 
@@ -156,5 +160,16 @@ public class ProjectServiceImpl implements ProjectService {
                 .toList();
 
         return new PageImpl<>(responses, pageable, companies.getTotalElements());
+    }
+
+    @Override
+    public BoostedInfoResponse getBoostedInfo(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+
+        long boostedUserCount = boostRepository.countByProject_Id(projectId);
+        long achievementAmount = boostRepository.sumAmountByProject_Id(projectId);
+
+        return BoostedInfoConverter.toBoostedInfoResponse(project, achievementAmount, boostedUserCount);
     }
 }
