@@ -37,9 +37,6 @@ public class Company extends BaseEntity {
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Boost> boosts;
-    private String password;
     @Enumerated(EnumType.STRING)
     private CompanyCategory category;
 
