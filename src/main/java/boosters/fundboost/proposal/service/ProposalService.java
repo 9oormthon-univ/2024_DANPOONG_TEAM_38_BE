@@ -10,5 +10,5 @@ public interface ProposalService {
 
     Page<ProposalResponse> getProposals(User user, int page);
 
-    ProposalResponse getProposal(Long id);
+    ProposalResponse getProposal(User user, Long id);
 }

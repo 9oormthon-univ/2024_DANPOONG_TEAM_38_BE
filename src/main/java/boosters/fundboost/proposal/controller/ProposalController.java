@@ -61,6 +61,6 @@ public class ProposalController {
     @GetMapping("/{proposalId}")
     public BaseResponse<ProposalResponse> getProposal(@Parameter(name = "user", hidden = true) @AuthUser User user,
                                                       @PathVariable(value = "proposalId") long proposalId) {
-        return BaseResponse.onSuccess(SuccessStatus._OK, proposalService.getProposal(proposalId));
+        return BaseResponse.onSuccess(SuccessStatus._OK, proposalService.getProposal(user, proposalId));
     }
 }
