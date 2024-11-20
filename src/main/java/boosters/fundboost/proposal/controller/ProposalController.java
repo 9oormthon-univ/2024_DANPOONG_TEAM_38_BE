@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,7 +43,7 @@ public class ProposalController {
         return BaseResponse.onSuccess(SuccessStatus._NO_CONTENT, null);
     }
 
-    @Operation(summary = "제안서 조회 API", description = "기업의 제안서를 조회합니다._숙희")
+    @Operation(summary = "제안서 전체 조회 API", description = "기업의 제안서 전체를 조회합니다._숙희")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
@@ -51,5 +52,15 @@ public class ProposalController {
             @Parameter(name = "user", hidden = true) @AuthUser User user,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
         return BaseResponse.onSuccess(SuccessStatus._OK, proposalService.getProposals(user, page));
+    }
+
+    @Operation(summary = "제안서 상세 조회 API", description = "기업의 제안서를 상세조회합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/{proposalId}")
+    public BaseResponse<ProposalResponse> getProposal(@Parameter(name = "user", hidden = true) @AuthUser User user,
+                                                      @PathVariable(value = "proposalId") long proposalId) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, proposalService.getProposal(proposalId));
     }
 }
