@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -114,5 +115,15 @@ public class ProjectServiceImpl implements ProjectService {
                 request.getEndDate()
         );
         projectRepository.save(project);
+    }
+    @Transactional
+    public void deleteProject(Long projectId) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+        if (!project.getUser().getId().equals(userId)) {
+            throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
+        }
+        projectRepository.delete(project);
     }
 }

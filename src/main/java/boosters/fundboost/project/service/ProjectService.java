@@ -14,6 +14,7 @@ import java.util.List;
 public interface ProjectService {
     void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image);
     void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image);
+    void deleteProject(Long projectId);
     List<NewProjectResponse> getNewProjects();
     List<NewProjectResponse> getProjectsByCategory(ProjectCategory category);
     List<NewProjectResponse> getProjectsByRegion(Region region);
