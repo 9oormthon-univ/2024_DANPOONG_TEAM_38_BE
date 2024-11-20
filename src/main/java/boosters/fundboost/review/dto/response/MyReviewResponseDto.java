@@ -5,19 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewResponseDto {
-    private Long id;
-    private String title;
-    private String description;
+public class MyReviewResponseDto {
     private String author;
+    private String profileImage;
     private LocalDateTime createdAt;
-    private BigDecimal amount;
+    private String description;
 }
-

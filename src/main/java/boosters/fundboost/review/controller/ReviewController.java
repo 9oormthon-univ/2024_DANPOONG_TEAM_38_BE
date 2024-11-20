@@ -1,7 +1,9 @@
 package boosters.fundboost.review.controller;
 
 import boosters.fundboost.global.security.util.SecurityUtils;
+import boosters.fundboost.review.domain.enums.ReviewType;
 import boosters.fundboost.review.dto.request.ReviewRequestDto;
+import boosters.fundboost.review.dto.response.MyReviewResponseDto;
 import boosters.fundboost.review.dto.response.ReviewResponseDto;
 import boosters.fundboost.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,14 +13,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/projects/{projectId}/reviews")
+@RequestMapping("/api/projects/{projectId}/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Review 📝", description = "리뷰 관련 API")
 public class ReviewController {
@@ -51,4 +56,26 @@ public class ReviewController {
         ReviewResponseDto response = reviewService.createCompletionReview(projectId, userId, reviewRequestDto);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/{reviewType}")
+    @Operation(summary = "후기 조회 API", description = "타입 별 후기를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ResponseEntity<List<ReviewResponseDto>> getProjectReviewsByType(
+            @PathVariable Long projectId,
+            @PathVariable ReviewType reviewType) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByProjectIdAndType(projectId, reviewType);
+        return ResponseEntity.ok(reviews);
+    }
+    @GetMapping("/my")
+    @Operation(summary = "내가 작성한 리뷰 조회 API", description = "로그인한 사용자가 작성한 리뷰를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ResponseEntity<List<MyReviewResponseDto>> getMyReviews() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        List<MyReviewResponseDto> myReviews = reviewService.getMyReviews(userId);
+        return ResponseEntity.ok(myReviews);
+    }
 }
+
