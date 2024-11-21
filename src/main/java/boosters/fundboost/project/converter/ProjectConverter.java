@@ -3,6 +3,7 @@ package boosters.fundboost.project.converter;
 import boosters.fundboost.global.utils.CalculatorUtil;
 import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
@@ -53,7 +54,9 @@ public class ProjectConverter {
                 .region(project.getRegion().getName())
                 .progressRate(progressRate)
                 .achievedAmount(project.getAchievedAmount())
+                .isCorporateFunding(project.getProgress() == Progress.CORPORATE_FUNDING)
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .userName(project.getUser().getName())
                 .build();
     }
 
