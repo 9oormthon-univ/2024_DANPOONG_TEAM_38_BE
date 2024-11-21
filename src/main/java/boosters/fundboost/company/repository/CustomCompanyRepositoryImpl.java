@@ -1,5 +1,6 @@
 package boosters.fundboost.company.repository;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 
 import boosters.fundboost.company.domain.Company;
@@ -12,7 +13,6 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
 
     @Override
     public Map<Company, CompanyRankingRecord> findCompanies(String sortType) {
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = LocalDateTime.now();
 
         Map<Company, CompanyRankingRecord> companies;
 
@@ -50,24 +50,24 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
         return companies;
     }
 
-    private Map<Company, CompanyRankingRecord> getTopContributingCompaniesByAmount(LocalDate startDate, LocalDate endDate) {
+    private Map<Company, CompanyRankingRecord> getTopContributingCompaniesByAmount(LocalDateTime startDate, LocalDateTime endDate) {
         List<Tuple> companies = getCompanies(boost.amount.sum(), startDate, endDate);
 
         return mapToCompanyRankingRecord(companies);
     }
 
     private Map<Company, CompanyRankingRecord> getTopContributeCompaniesByProjects() {
-        List<Tuple> companies = getCompanies(boost.count(), LocalDate.now().minusYears(YEAR), LocalDate.now());
+        List<Tuple> companies = getCompanies(boost.count(), LocalDateTime.now().minusYears(YEAR), LocalDateTime.now());
 
         return mapToCompanyRankingRecord(companies);
     }
 
-    private List<Tuple> getCompanies(NumberExpression numberExpression, LocalDate startDate, LocalDate endDate) {
+    private List<Tuple> getCompanies(NumberExpression numberExpression, LocalDateTime startDate, LocalDateTime endDate) {
         return queryFactory
                 .select(company, boost.amount.sum(), boost.count())
                 .from(boost)
                 .join(boost.user.company, company)
-                .where(boost.createdAt.between(startDate.atStartOfDay(), endDate.atStartOfDay()))
+                .where(boost.createdAt.between(startDate, endDate))
                 .groupBy(company.id)
                 .orderBy(numberExpression.desc())
                 .limit(LIMIT_SIZE)
