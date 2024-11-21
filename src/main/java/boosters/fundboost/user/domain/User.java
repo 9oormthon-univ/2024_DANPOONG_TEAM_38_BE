@@ -6,6 +6,7 @@ import boosters.fundboost.follow.domain.Follow;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.dto.request.ProfileEditRequest;
@@ -48,6 +49,8 @@ public class User extends BaseEntity {
     private List<Like> likes;
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Proposal> proposals;
 
     @Builder
     public User(String name, String email, String image, UserType userType, String link, String title, String content, Tag tag) {

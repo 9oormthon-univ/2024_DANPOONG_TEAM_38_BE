@@ -8,7 +8,6 @@ import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
-import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.user.domain.User;
 import jakarta.persistence.CascadeType;
@@ -69,11 +68,8 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Boost> boosts;
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Proposal> proposals;
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Review> reviews;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -108,6 +104,7 @@ public class Project extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
     public void updateBasicInfo(String mainTitle, String subTitle, String image, ProjectCategory category, Region region,
                                 String account, String budgetDescription, String scheduleDescription,
                                 String teamDescription, Long targetAmount, String introduction, LocalDate startDate,

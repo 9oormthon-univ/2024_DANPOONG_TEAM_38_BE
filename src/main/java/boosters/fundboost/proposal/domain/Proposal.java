@@ -2,8 +2,10 @@ package boosters.fundboost.proposal.domain;
 
 import boosters.fundboost.company.domain.Company;
 import boosters.fundboost.global.common.domain.BaseEntity;
-import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.global.converter.FilesConverter;
+import boosters.fundboost.user.domain.User;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,23 +30,24 @@ public class Proposal extends BaseEntity {
     @Column(name = "proposal_id")
     private Long id;
     private String title;
-    private String file;
+    @Convert(converter = FilesConverter.class)
+    private List<String> files;
     private String content;
     private LocalDate viewedAt;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @Builder
-    public Proposal(String title, String file, String content, Project project, Company company) {
+    public Proposal(String title, List<String> files, String content, User user, Company company) {
         this.title = title;
         this.content = content;
         this.viewedAt = LocalDate.now();
-        this.file = file;
-        this.project = project;
+        this.files = files;
+        this.user = user;
         this.company = company;
     }
 }
