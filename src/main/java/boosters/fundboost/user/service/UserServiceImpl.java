@@ -5,13 +5,15 @@ import boosters.fundboost.follow.service.FollowService;
 import boosters.fundboost.global.common.domain.enums.UploadType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.uploader.S3UploaderService;
+import boosters.fundboost.global.utils.MyPageValidator;
 import boosters.fundboost.like.service.LikeService;
 import boosters.fundboost.project.converter.ProjectConverter;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
-import boosters.fundboost.user.converter.UserMyPageConverter;
+import boosters.fundboost.user.converter.MyPageConverter;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.request.ProfileEditRequest;
+import boosters.fundboost.user.dto.response.PeerMyPageResponse;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
 import boosters.fundboost.user.exception.UserException;
 import boosters.fundboost.user.repository.UserRepository;
@@ -71,5 +73,18 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
 
         user.updateUser(request, imageUrl);
+    }
+
+    @Override
+    public PeerMyPageResponse getPeerProfile(Long peerId, Long userId) {
+        MyPageValidator.validatePeerId(peerId, userId);
+
+        User user = userRepository.findById(peerId)
+                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+
+        long followingCount = followService.getFollowingCount(user);
+        long followerCount = followService.getFollowerCount(user);
+
+        return MyPageConverter.toPeerMyPageResponse(user, followingCount, followerCount);
     }
 }
