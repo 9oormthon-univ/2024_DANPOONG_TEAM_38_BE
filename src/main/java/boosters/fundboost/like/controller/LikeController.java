@@ -1,6 +1,7 @@
 package boosters.fundboost.like.controller;
 
 import boosters.fundboost.global.security.util.SecurityUtils;
+import boosters.fundboost.like.dto.LikeCountResponse;
 import boosters.fundboost.like.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,9 +41,8 @@ public class LikeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공적으로 좋아요 수 반환"),
     })
-    public ResponseEntity<Map<String, Object>> getLikeCountByProject(@PathVariable Long projectId) {
+    public ResponseEntity<LikeCountResponse> getLikeCountByProject(@PathVariable Long projectId) {
         long likeCount = likeService.getLikeCountByProject(projectId);
-        Map<String, Object> response = Map.of("likeCount", likeCount);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new LikeCountResponse(likeCount));
     }
 }

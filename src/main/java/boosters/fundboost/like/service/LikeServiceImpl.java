@@ -5,6 +5,7 @@ import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.like.exception.LikeException;
 import boosters.fundboost.like.repository.LikeRepository;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.exception.ProjectException;
 import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.repository.UserRepository;
@@ -53,7 +54,8 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public long getLikeCountByProject(Long projectId) {
         projectRepository.findById(projectId)
-                .orElseThrow(() -> new LikeException(ErrorStatus.PROJECT_NOT_FOUND));
+                .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+
         return likeRepository.countByProjectId(projectId);
     }
 }
