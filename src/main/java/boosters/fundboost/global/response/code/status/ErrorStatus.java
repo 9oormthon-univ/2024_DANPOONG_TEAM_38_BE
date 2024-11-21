@@ -19,8 +19,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON405", "유효하지 않은 파라미터입니다."),
     //TOKEN
     NOT_FOUND_TOKEN(HttpStatus.NOT_FOUND, "TOKEN400", "토큰을 찾을 수 없습니다."),
-    NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN401","토큰이 일치하지 않습니다."),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN402","유효하지 않은 토큰입니다."),
+    NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN401", "토큰이 일치하지 않습니다."),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN402", "유효하지 않은 토큰입니다."),
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER400", "유저를 찾을 수 없습니다."),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "USER401", "인증되지 않은 유저입니다."),
@@ -49,6 +49,8 @@ public enum ErrorStatus implements BaseErrorCode {
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE400", "좋아요 기록을 찾을 수 없습니다."),
     LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "LIKE401", "이미 좋아요를 추가했습니다."),
     LIKE_INVALID_OPERATION(HttpStatus.BAD_REQUEST, "LIKE402", "유효하지 않은 좋아요 작업입니다."),
+    // SEARCH
+    KEYWORD_LENGTH_ERROR(HttpStatus.BAD_REQUEST, "SEARCH400", "검색어는 2글자 이상이어야 합니다."),
     ;
 
     private final HttpStatus httpStatus;

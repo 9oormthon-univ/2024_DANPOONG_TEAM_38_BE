@@ -61,6 +61,10 @@ public class ProjectConverter {
                 .build();
     }
 
+    public Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
+        return projects.map(this::toNewProjectResponse);
+    }
+
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
         return ProjectDetailResponse.builder()
                 .id(project.getId())
@@ -97,6 +101,7 @@ public class ProjectConverter {
     public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())
+                .userName(project.getUser().getName())
                 .mainTitle(project.getMainTitle())
                 .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .progress(project.getProgress().name())

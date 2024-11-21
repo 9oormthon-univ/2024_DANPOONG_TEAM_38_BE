@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class ProjectPreviewResponse {
     private String image;
+    private String userName;
     private String mainTitle;
     private String period;
     private String progress;
