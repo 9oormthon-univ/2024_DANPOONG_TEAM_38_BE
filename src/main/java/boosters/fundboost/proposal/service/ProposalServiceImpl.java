@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,12 +35,14 @@ public class ProposalServiceImpl implements ProposalService {
     @Transactional
     public void writeProposal(User user, ProposalRequest request) {
         Company company = companyService.findById(request.getCompanyId());
-        String fileUrl = Optional.ofNullable(request.getFile())
+        List<String> files = Optional.ofNullable(request.getFile())
+                .orElse(Collections.emptyList())
+                .stream()
                 .filter(file -> !file.isEmpty())
                 .map(file -> s3UploaderService.uploadFile(file, UploadType.FILE.getDirectory()))
-                .orElse(null);
+                .toList();
 
-        Proposal proposal = createProposal(user, request, fileUrl, company);
+        Proposal proposal = createProposal(user, request, files, company);
 
         proposalRepository.save(proposal);
     }
@@ -58,12 +62,12 @@ public class ProposalServiceImpl implements ProposalService {
         return ProposalConverter.toProposalResponse(proposal);
     }
 
-    private Proposal createProposal(User user, ProposalRequest request, String file, Company company) {
+    private Proposal createProposal(User user, ProposalRequest request, List<String> files, Company company) {
         return Proposal.builder()
                 .user(user)
                 .title(request.getTitle())
                 .content(request.getContent())
                 .company(company)
-                .file(file).build();
+                .files(files).build();
     }
 }
