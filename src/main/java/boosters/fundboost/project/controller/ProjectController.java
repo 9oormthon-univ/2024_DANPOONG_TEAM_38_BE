@@ -164,4 +164,16 @@ public class ProjectController {
     public BaseResponse<BoostedInfoResponse> getBoostedInfo(@RequestParam(name = "projectId") Long projectId) {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getBoostedInfo(projectId));
     }
+
+    @Operation(summary = "프로젝트 검색 API", description = "프로젝트를 검색합니다._숙희")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @ApiResponse(responseCode = "SEARCH400", description = "KEYWORD_LENGTH_ERROR,검색어는 2글자 이상이어야 합니다."),
+
+    })
+    @GetMapping("/search/{keyword}")
+    public BaseResponse<Page<NewProjectResponse>> search(@PathVariable(name = "keyword") String keyword,
+                                                         @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.searchProject(keyword, page));
+    }
 }
