@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PeerMyPageResponse getPeerProfile(Long peerId, Long userId) {
+    public PeerMyPageResponse getPeerProfile(Long peerId, Long userId){
         MyPageValidator.validatePeerId(peerId, userId);
 
         User user = userRepository.findById(peerId)
