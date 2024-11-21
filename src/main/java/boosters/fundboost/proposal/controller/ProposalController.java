@@ -34,7 +34,8 @@ public class ProposalController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @ApiResponse(responseCode = "PROJECT400", description = "PROJECT_NOT_FOUND, 프로젝트를 찾을 수 없습니다."),
             @ApiResponse(responseCode = "COMPANY400", description = "COMPANY_NOT_FOUND, 기업을 찾을 수 없습니다."),
-            @ApiResponse(responseCode = "S3400", description = "INVALID_EXTENSION, 지원하지 않는 확장자입니다.")
+            @ApiResponse(responseCode = "S3400", description = "INVALID_EXTENSION, 지원하지 않는 확장자입니다."),
+            @ApiResponse(responseCode = "FILE400", description = "FILE_CONVERT_ERROR, 파일링크를 JSON형식으로 변환하는 중 에러가 발생했습니다."),
     })
     @PostMapping(name = "/write", consumes = {"multipart/form-data"})
     public BaseResponse<?> createProposal(@Parameter(name = "user", hidden = true) @AuthUser User user,
