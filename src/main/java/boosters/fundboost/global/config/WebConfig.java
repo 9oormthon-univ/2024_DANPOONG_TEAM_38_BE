@@ -1,5 +1,6 @@
 package boosters.fundboost.global.config;
 
+import boosters.fundboost.global.security.handler.resolver.AuthInfoArgumentResolver;
 import boosters.fundboost.global.security.handler.resolver.AuthUserArgumentResolver;
 import boosters.fundboost.global.security.handler.resolver.TokenArgumentResolver;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     private final AuthUserArgumentResolver authUserArgumentResolver;
     private final TokenArgumentResolver tokenArgumentResolver;
+    private final AuthInfoArgumentResolver authInfoArgumentResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -30,5 +32,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authUserArgumentResolver);
         resolvers.add(tokenArgumentResolver);
+        resolvers.add(authInfoArgumentResolver);
     }
 }
