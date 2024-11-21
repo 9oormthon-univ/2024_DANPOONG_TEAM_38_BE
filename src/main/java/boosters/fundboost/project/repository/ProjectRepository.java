@@ -34,6 +34,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, CustomP
     @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC")
     Page<Project> findAllProjects(Pageable pageable);
 
+    @Query("SELECT p FROM Project p LEFT JOIN Like l ON p.id = l.project.id GROUP BY p.id ORDER BY COUNT(l.id) DESC")
+    Page<Project> findPopularProjects(Pageable pageable);
+
     @Query("SELECT p FROM Project p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Project> findByUserId(@Param("userId") Long userId);
 
