@@ -21,7 +21,6 @@ import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
-import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.project.exception.ProjectException;
 import boosters.fundboost.project.repository.ProjectRepository;
 import boosters.fundboost.user.domain.User;
@@ -177,12 +176,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectPreviewResponse> searchProject(String keyword, int page) {
+    public Page<NewProjectResponse> searchProject(String keyword, int page) {
         SearchValidator.ValidateKeyword(keyword);
         Pageable pageable = PageRequest.of(page, SEARCH_PAGE_SIZE);
 
         Page<Project> projects = projectRepository.searchProject(keyword, pageable);
-        return ProjectConverter.toProjectPreviewResponse(projects);
+        return projectConverter.toNewProjectPageResponse(projects);
     }
 
     @Override

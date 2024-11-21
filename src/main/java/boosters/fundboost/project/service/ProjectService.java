@@ -9,7 +9,6 @@ import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
-import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,5 +46,5 @@ public interface ProjectService {
 
     BoostedInfoResponse getBoostedInfo(Long projectId);
 
-    Page<ProjectPreviewResponse> searchProject(String keyword, int page);
+    Page<NewProjectResponse> searchProject(String keyword, int page);
 }

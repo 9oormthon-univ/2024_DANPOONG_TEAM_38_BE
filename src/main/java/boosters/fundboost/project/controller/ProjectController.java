@@ -10,7 +10,6 @@ import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
-import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -171,10 +170,10 @@ public class ProjectController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @ApiResponse(responseCode = "SEARCH400", description = "KEYWORD_LENGTH_ERROR,검색어는 2글자 이상이어야 합니다."),
 
-                    })
+    })
     @GetMapping("/search/{keyword}")
-    public BaseResponse<Page<ProjectPreviewResponse>> search(@PathVariable(name = "keyword") String keyword,
-                                                             @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
-        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.searchProject(keyword,page));
+    public BaseResponse<Page<NewProjectResponse>> search(@PathVariable(name = "keyword") String keyword,
+                                                         @RequestParam(value = "page", defaultValue = "0", required = false) int page) {
+        return BaseResponse.onSuccess(SuccessStatus._OK, projectService.searchProject(keyword, page));
     }
 }

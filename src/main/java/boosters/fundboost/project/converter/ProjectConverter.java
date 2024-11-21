@@ -60,6 +60,10 @@ public class ProjectConverter {
                 .build();
     }
 
+    public Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
+        return projects.map(this::toNewProjectResponse);
+    }
+
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
         return ProjectDetailResponse.builder()
                 .id(project.getId())
