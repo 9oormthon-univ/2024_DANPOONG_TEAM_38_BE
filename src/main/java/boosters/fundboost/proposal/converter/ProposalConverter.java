@@ -13,6 +13,7 @@ public class ProposalConverter {
 
     public static ProposalPreviewResponse toProposalPreviewResponse(Proposal proposal) {
         return ProposalPreviewResponse.builder()
+                .id(proposal.getId())
                 .userName(proposal.getUser().getName())
                 .image(proposal.getUser().getImage())
                 .title(proposal.getTitle())
@@ -20,6 +21,7 @@ public class ProposalConverter {
                 .createdAt(PeriodUtil.localDateTimeToPeriodFormat(proposal.getCreatedAt()))
                 .build();
     }
+
     public static ProposalResponse toProposalResponse(Proposal proposal) {
         return ProposalResponse.builder()
                 .proposal(toProposalPreviewResponse(proposal))
