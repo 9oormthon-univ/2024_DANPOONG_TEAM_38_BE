@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProposalPreviewResponse {
+    private Long id;
     private String userName;
     private String image;
     private String title;
