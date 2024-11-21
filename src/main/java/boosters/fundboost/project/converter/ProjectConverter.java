@@ -56,6 +56,7 @@ public class ProjectConverter {
                 .achievedAmount(project.getAchievedAmount())
                 .isCorporateFunding(project.getProgress() == Progress.CORPORATE_FUNDING)
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .userName(project.getUser().getName())
                 .build();
     }
 
