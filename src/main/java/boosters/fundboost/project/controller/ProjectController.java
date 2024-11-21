@@ -7,6 +7,7 @@ import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
+import boosters.fundboost.project.dto.request.NewProjectRequest;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
@@ -88,9 +89,10 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
+
     @GetMapping("/all")
-    public BaseResponse<Page<NewProjectResponse>> getAllProjects(@PageableDefault(size = 10) Pageable pageable) {
-        Page<NewProjectResponse> response = projectService.getAllProjects(pageable);
+    public BaseResponse<Page<NewProjectResponse>> getAllProjects(NewProjectRequest request) {
+        Page<NewProjectResponse> response = projectService.getAllProjects(request.toPageable());
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
 
