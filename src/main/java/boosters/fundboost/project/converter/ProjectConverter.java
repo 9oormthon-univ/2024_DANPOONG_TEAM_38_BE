@@ -94,6 +94,7 @@ public class ProjectConverter {
     public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
         return projects.map(project -> ProjectPreviewResponse.builder()
                 .image(project.getImage())
+                .userName(project.getUser().getName())
                 .mainTitle(project.getMainTitle())
                 .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .progress(project.getProgress().name())
