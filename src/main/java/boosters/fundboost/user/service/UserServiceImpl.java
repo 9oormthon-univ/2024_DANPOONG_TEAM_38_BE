@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public UserMyPageResponse getMyPage(User user) {
         long followingCount = followService.getFollowingCount(user);
         long followerCount = followService.getFollowerCount(user);
-        return UserMyPageConverter.toUserMyPageResponse(user, followingCount, followerCount);
+        return MyPageConverter.toUserMyPageResponse(user, followingCount, followerCount);
     }
 
     @Override
