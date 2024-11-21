@@ -6,4 +6,4 @@ import org.springframework.data.domain.Pageable;
 
 public interface LikeService {
     Page<Project> getLikeProjects(Long userId, Pageable pageable);
-}
+    boolean toggleLike(Long projectId, Long userId);}

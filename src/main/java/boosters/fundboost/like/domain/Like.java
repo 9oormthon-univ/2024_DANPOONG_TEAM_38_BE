@@ -23,4 +23,10 @@ public class Like extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    public static Like createLike(Project project, User user) {
+        Like like = new Like();
+        like.project = project;
+        like.user = user;
+        return like;
+    }
 }
