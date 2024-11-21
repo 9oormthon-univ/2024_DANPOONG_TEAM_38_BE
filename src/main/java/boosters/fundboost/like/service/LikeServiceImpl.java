@@ -50,7 +50,6 @@ public class LikeServiceImpl implements LikeService {
     }
     @Override
     public long getLikeCountByProject(Long projectId) {
-        // 프로젝트 존재 여부 확인
         projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
 

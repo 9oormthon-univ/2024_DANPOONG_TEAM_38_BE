@@ -28,8 +28,8 @@ public class LikeController {
             @ApiResponse(responseCode = "200", description = "OK, 성공적으로 좋아요 추가/취소"),
     })
     public ResponseEntity<String> toggleLike(@PathVariable Long projectId) {
-        Long userId = SecurityUtils.getCurrentUserId(); // 로그인된 사용자 ID 가져오기
-        boolean isLiked = likeService.toggleLike(projectId, userId); // 좋아요 상태 변경
+        Long userId = SecurityUtils.getCurrentUserId();
+        boolean isLiked = likeService.toggleLike(projectId, userId);
         String message = isLiked ? "좋아요를 추가했습니다." : "좋아요를 취소했습니다.";
         return ResponseEntity.ok(message);
     }
