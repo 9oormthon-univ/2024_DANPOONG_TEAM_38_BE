@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserMyPageResponse {
+    private String name;
     private String image;
     private String link;
     private String tag;
