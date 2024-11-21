@@ -1,6 +1,7 @@
 package boosters.fundboost.user.converter;
 
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.dto.response.PeerMyPageResponse;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
 
@@ -21,6 +22,7 @@ public class MyPageConverter {
                 .userInfo(toUserMyPageResponse(user, followingCount, followerCount))
                 .title(user.getTitle())
                 .content(user.getContent())
+                .isCompany(user.getUserType().equals(UserType.COMPANY))
                 .build();
     }
 }

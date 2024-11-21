@@ -14,4 +14,5 @@ public class PeerMyPageResponse {
     private UserMyPageResponse userInfo;
     private String title;
     private String content;
+    private boolean isCompany;
 }
