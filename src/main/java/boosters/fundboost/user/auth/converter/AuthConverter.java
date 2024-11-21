@@ -1,19 +1,23 @@
 package boosters.fundboost.user.auth.converter;
 
+import boosters.fundboost.global.utils.NameUtil;
 import boosters.fundboost.user.auth.dto.AuthResponse.TokenRefreshResponse;
 import boosters.fundboost.user.auth.dto.AuthResponse.OAuthResponse;
 import boosters.fundboost.user.auth.dto.KakaoProfile;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
 
 public class AuthConverter {
+    private final static String DEFAULT_IMAGE = "https://fundboost-bucket.s3.ap-northeast-2.amazonaws.com/logo.png";
+
     public static User toUser(KakaoProfile kakaoProfile) {
-        //TODO: 이름 닉네임, 이미지 디폴트 값 설정 필요
         return User.builder()
                 .email(kakaoProfile.getKakao_account().getEmail())
-                .name("tmp")
+                .name(NameUtil.createNickname())
                 .userType(UserType.USER)
-                .image("DEFAULT IMAGE")
+                .image(DEFAULT_IMAGE)
+                .tag(Tag.SEASSAK_INVESTOR)
                 .build();
 
     }
