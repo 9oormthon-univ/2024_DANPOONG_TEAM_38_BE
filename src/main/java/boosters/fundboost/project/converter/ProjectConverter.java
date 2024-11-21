@@ -33,6 +33,7 @@ public class ProjectConverter {
                 .introduction(request.getIntroduction())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
+                .summary(request.getSummary())
                 .user(user)
                 .build();
     }
@@ -70,6 +71,7 @@ public class ProjectConverter {
                 .budgetDescription(project.getBudgetDescription())
                 .scheduleDescription(project.getScheduleDescription())
                 .teamDescription(project.getTeamDescription())
+                .summary(project.getSummary())
                 .build();
     }
 
@@ -87,7 +89,8 @@ public class ProjectConverter {
                 request.getTargetAmount(),
                 request.getIntroduction(),
                 request.getStartDate(),
-                request.getEndDate()
+                request.getEndDate(),
+                request.getSummary()
         );
     }
 
