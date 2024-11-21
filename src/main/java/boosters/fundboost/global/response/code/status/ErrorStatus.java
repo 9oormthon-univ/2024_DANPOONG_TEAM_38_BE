@@ -45,6 +45,10 @@ public enum ErrorStatus implements BaseErrorCode {
     PROPOSAL_NOT_FOUND(HttpStatus.NOT_FOUND, "PROPOSAL400", "제안서를 찾을 수 없습니다."),
     // FILE
     FILE_CONVERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE400", "파일링크를 JSON형식으로 변환하는 중 에러가 발생했습니다."),
+    // LIKE
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE400", "좋아요 기록을 찾을 수 없습니다."),
+    LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "LIKE401", "이미 좋아요를 추가했습니다."),
+    LIKE_INVALID_OPERATION(HttpStatus.BAD_REQUEST, "LIKE402", "유효하지 않은 좋아요 작업입니다."),
     ;
 
     private final HttpStatus httpStatus;
