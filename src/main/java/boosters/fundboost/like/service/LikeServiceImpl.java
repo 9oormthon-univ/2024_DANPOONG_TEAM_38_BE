@@ -27,9 +27,6 @@ public class LikeServiceImpl implements LikeService {
     public Page<Project> getLikeProjects(Long userId, Pageable pageable) {
         Page<Like> likes = likeRepository.findAllByUser_Id(userId, pageable);
 
-        if (likes.isEmpty()) {
-            throw new LikeException(ErrorStatus.LIKE_NOT_FOUND);
-        }
         return likes.map(Like::getProject);
     }
 
@@ -53,9 +50,11 @@ public class LikeServiceImpl implements LikeService {
     }
     @Override
     public long getLikeCountByProject(Long projectId) {
+        // 프로젝트 존재 여부 확인
         projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
 
         return likeRepository.countByProjectId(projectId);
     }
+
 }
