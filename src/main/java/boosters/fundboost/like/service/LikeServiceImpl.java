@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class LikeServiceImpl implements LikeService {
         return likes.map(Like::getProject);
     }
 
+    @Transactional
     @Override
     public boolean toggleLike(Long projectId, Long userId) {
         Project project = projectRepository.findById(projectId)
