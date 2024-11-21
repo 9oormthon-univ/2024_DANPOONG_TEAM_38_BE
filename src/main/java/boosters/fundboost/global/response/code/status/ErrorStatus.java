@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //USER
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER400", "유저를 찾을 수 없습니다."),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "USER401", "인증되지 않은 유저입니다."),
+    SELF_PROFILE_ACCESS_NOT_ALLOWED(HttpStatus.FORBIDDEN, "USER402", "해당 API로 본인의 마이페이지는 조회할 수 없습니다."),
     // PROJECT
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "PROJECT400", "프로젝트를 찾을 수 없습니다."),
     PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "PROJECT401", "이미 존재하는 프로젝트입니다."),

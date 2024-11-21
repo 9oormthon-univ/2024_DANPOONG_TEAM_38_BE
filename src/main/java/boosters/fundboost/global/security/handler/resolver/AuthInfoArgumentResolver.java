@@ -1,10 +1,8 @@
 package boosters.fundboost.global.security.handler.resolver;
 
-import boosters.fundboost.global.response.code.status.ErrorStatus;
-import boosters.fundboost.global.security.handler.annotation.AuthUser;
+import boosters.fundboost.global.security.handler.annotation.AuthInfo;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.user.auth.exception.AuthException;
-import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -18,13 +16,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthInfoArgumentResolver implements HandlerMethodArgumentResolver {
     private final UserService userService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(User.class)
-                && parameter.hasParameterAnnotation(AuthUser.class);
+        return parameter.getParameterType().equals(Long.class)
+                && parameter.hasParameterAnnotation(AuthInfo.class);
     }
 
     @Override
@@ -34,13 +32,13 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) throws AuthException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            if (authentication.getName().equals("anonymousUser")) {
-                throw new AuthException(ErrorStatus.UNAUTHORIZED_USER);
-            }
+
+        if ((authentication == null) || authentication.getName().equals("anonymousUser")) {
+            return null;
         }
 
         String userEmail = SecurityUtils.getAuthUserEmail(authentication);
-        return userService.getUser(userEmail);
+        return userService.getUser(userEmail).getId();
     }
+
 }
