@@ -7,8 +7,10 @@ import boosters.fundboost.company.dto.request.CompanyLoginRequest;
 import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingResponse;
+import boosters.fundboost.company.exception.CompanyException;
 import boosters.fundboost.company.repository.CompanyRepository;
 import boosters.fundboost.company.auth.email.service.EmailService;
+import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.jwt.JwtTokenProvider;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.domain.enums.Tag;
@@ -121,5 +123,10 @@ public class CompanyService {
         return companies.entrySet().stream()
                 .map(entry -> CompanyRankingConverter.toCompanyRankingResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    public Company findById(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyException(ErrorStatus.COMPANY_NOT_FOUND));
     }
 }

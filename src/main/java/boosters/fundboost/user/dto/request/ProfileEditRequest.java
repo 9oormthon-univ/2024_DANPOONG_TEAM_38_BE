@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class ProfileEditRequest {
-    String link;
-    String introduceTitle;
-    String introduceContent;
-    MultipartFile image;
+    private String link;
+    private String introduceTitle;
+    private String introduceContent;
+    private MultipartFile image;
 
 }
