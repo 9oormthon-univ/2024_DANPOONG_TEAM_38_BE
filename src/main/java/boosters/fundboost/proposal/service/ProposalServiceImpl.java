@@ -7,6 +7,7 @@ import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.uploader.S3UploaderService;
 import boosters.fundboost.proposal.converter.ProposalConverter;
 import boosters.fundboost.proposal.domain.Proposal;
+import boosters.fundboost.proposal.dto.response.ProposalPreviewResponse;
 import boosters.fundboost.proposal.dto.response.ProposalResponse;
 import boosters.fundboost.proposal.exception.ProposalException;
 import boosters.fundboost.proposal.repository.ProposalRepository;
@@ -48,7 +49,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Page<ProposalResponse> getProposals(User user, int page) {
+    public Page<ProposalPreviewResponse> getProposals(User user, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Proposal> proposals = proposalRepository.findAllByCompany(user.getCompany(), pageable);
         return ProposalConverter.toProposalPreviewResponse(proposals);

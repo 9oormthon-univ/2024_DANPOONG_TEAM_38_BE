@@ -1,19 +1,13 @@
 package boosters.fundboost.proposal.dto.response;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
+import java.util.List;
+
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class ProposalResponse {
-    private String userName;
-    private String image;
-    private String title;
-    private String content;
-    private String createdAt;
+    ProposalPreviewResponse proposal;
+    List<String> files;
 }
