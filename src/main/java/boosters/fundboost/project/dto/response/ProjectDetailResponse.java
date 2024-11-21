@@ -14,4 +14,5 @@ public class ProjectDetailResponse {
     private String budgetDescription;
     private String scheduleDescription;
     private String teamDescription;
+    private String summary;
 }

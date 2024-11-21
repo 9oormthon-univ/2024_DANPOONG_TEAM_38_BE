@@ -8,7 +8,6 @@ import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
-import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.user.domain.User;
 import jakarta.persistence.CascadeType;
@@ -51,6 +50,7 @@ public class Project extends BaseEntity {
     private String account;
     private long achievedAmount;
     private Long targetAmount;
+    private String summary;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -69,11 +69,8 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Boost> boosts;
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Proposal> proposals;
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Review> reviews;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -91,7 +88,7 @@ public class Project extends BaseEntity {
     @Builder
     public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
                    String account, String budgetDescription, String scheduleDescription, String teamDescription,
-                   Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate) {
+                   Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate, String summary) {
         this.mainTitle = mainTitle;
         this.subTitle = subTitle;
         this.image = image;
@@ -107,11 +104,13 @@ public class Project extends BaseEntity {
         this.progress = progress != null ? progress : Progress.DRAFT;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.summary = summary;
     }
+
     public void updateBasicInfo(String mainTitle, String subTitle, String image, ProjectCategory category, Region region,
                                 String account, String budgetDescription, String scheduleDescription,
                                 String teamDescription, Long targetAmount, String introduction, LocalDate startDate,
-                                LocalDate endDate) {
+                                LocalDate endDate, String summary) {
         if (image != null && !image.isEmpty()) {
             this.image = image;
         }
@@ -127,6 +126,6 @@ public class Project extends BaseEntity {
         this.introduction = introduction;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.summary = summary;
     }
-
 }

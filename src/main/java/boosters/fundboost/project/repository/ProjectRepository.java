@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, Long>, CustomProjectRepository {
 
@@ -37,4 +38,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, CustomP
     List<Project> findByUserId(@Param("userId") Long userId);
 
     long countByCreatedAtAfter(LocalDateTime date);
+    @Query("SELECT p FROM Project p JOIN FETCH p.user WHERE p.id = :projectId")
+    Optional<Project> findProjectWithUserById(@Param("projectId") Long projectId);
+
 }

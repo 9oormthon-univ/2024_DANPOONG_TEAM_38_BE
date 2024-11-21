@@ -45,4 +45,6 @@ public interface ProjectService {
     Project findById(long projectId);
 
     BoostedInfoResponse getBoostedInfo(Long projectId);
+
+    Page<NewProjectResponse> searchProject(String keyword, int page);
 }

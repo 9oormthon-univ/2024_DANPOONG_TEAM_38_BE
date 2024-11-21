@@ -6,8 +6,10 @@ import boosters.fundboost.follow.domain.Follow;
 import boosters.fundboost.global.common.domain.BaseEntity;
 import boosters.fundboost.like.domain.Like;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.proposal.domain.Proposal;
 import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
+import boosters.fundboost.user.dto.request.ProfileEditRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,6 +49,8 @@ public class User extends BaseEntity {
     private List<Like> likes;
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Boost> boosts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Proposal> proposals;
 
     @Builder
     public User(String name, String email, String image, UserType userType, String link, String title, String content, Tag tag) {
@@ -58,5 +62,20 @@ public class User extends BaseEntity {
         this.title = title;
         this.content = content;
         this.tag = tag;
+    }
+
+    public void updateUser(ProfileEditRequest request, String image) {
+        if (request.getLink() != null) {
+            this.link = request.getLink();
+        }
+        if (request.getIntroduceTitle() != null) {
+            this.title = request.getIntroduceTitle();
+        }
+        if (request.getIntroduceContent() != null) {
+            this.content = request.getIntroduceContent();
+        }
+        if (image != null) {
+            this.image = image;
+        }
     }
 }

@@ -19,4 +19,6 @@ public class NewProjectResponse {
     private double progressRate;
     private long achievedAmount;
     private String progressPeriod;
+    private boolean isCorporateFunding;
+    private String userName;
 }

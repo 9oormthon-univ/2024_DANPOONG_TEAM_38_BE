@@ -12,6 +12,7 @@ import boosters.fundboost.global.common.domain.enums.GetType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
+import boosters.fundboost.global.utils.SearchValidator;
 import boosters.fundboost.project.converter.ProjectConverter;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.Progress;
@@ -43,6 +44,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
     private final static int PAGE_SIZE = 3;
+    private final static int SEARCH_PAGE_SIZE = 16;
     private final static int COMPANY_RANKING_INDEX = 0;
     private final static int CONTRIBUTION_AMOUNT_INDEX = 1;
     private final ProjectRepository projectRepository;
@@ -171,6 +173,15 @@ public class ProjectServiceImpl implements ProjectService {
         long achievementAmount = boostRepository.sumAmountByProject_Id(projectId);
 
         return BoostedInfoConverter.toBoostedInfoResponse(project, achievementAmount, boostedUserCount);
+    }
+
+    @Override
+    public Page<NewProjectResponse> searchProject(String keyword, int page) {
+        SearchValidator.ValidateKeyword(keyword);
+        Pageable pageable = PageRequest.of(page, SEARCH_PAGE_SIZE);
+
+        Page<Project> projects = projectRepository.searchProject(keyword, pageable);
+        return projectConverter.toNewProjectPageResponse(projects);
     }
 
     @Override
