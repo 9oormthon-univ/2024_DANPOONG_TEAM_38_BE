@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PeerMyPageResponse getPeerProfile(Long peerId, Long userId){
+    public PeerMyPageResponse getPeerProfile(Long peerId, Long userId) {
         MyPageValidator.validatePeerId(peerId, userId);
 
         User user = userRepository.findById(peerId)
@@ -86,5 +86,10 @@ public class UserServiceImpl implements UserService {
         long followerCount = followService.getFollowerCount(user);
 
         return MyPageConverter.toPeerMyPageResponse(user, followingCount, followerCount);
+    }
+
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
     }
 }

@@ -1,7 +1,6 @@
 package boosters.fundboost.proposal.service;
 
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.service.CompanyService;
 import boosters.fundboost.global.common.domain.enums.UploadType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.uploader.S3UploaderService;
@@ -13,6 +12,7 @@ import boosters.fundboost.proposal.exception.ProposalException;
 import boosters.fundboost.proposal.repository.ProposalRepository;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.request.ProposalRequest;
+import boosters.fundboost.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +29,18 @@ import java.util.Optional;
 public class ProposalServiceImpl implements ProposalService {
     private static final int PAGE_SIZE = 4;
     private final ProposalRepository proposalRepository;
-    private final CompanyService companyService;
     private final S3UploaderService s3UploaderService;
+    private final UserService userService;
 
     @Override
     @Transactional
     public void writeProposal(User user, ProposalRequest request) {
-        Company company = companyService.findById(request.getCompanyId());
+        User companyUser = userService.findById(request.getUserId())
+                .orElseThrow(() -> new ProposalException(ErrorStatus.PROPOSAL_USER_NOT_FOUND));
+
+        Company company = Optional.ofNullable(companyUser.getCompany())
+                .orElseThrow(() -> new ProposalException(ErrorStatus.PROPOSAL_INVALID_COMPANY));
+
         List<String> files = Optional.ofNullable(request.getFile())
                 .orElse(Collections.emptyList())
                 .stream()
