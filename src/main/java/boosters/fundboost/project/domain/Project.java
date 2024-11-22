@@ -127,4 +127,8 @@ public class Project extends BaseEntity {
         this.endDate = endDate;
         this.summary = summary;
     }
+
+    public void setProgress(Progress progress) {
+        this.progress = progress;
+    }
 }

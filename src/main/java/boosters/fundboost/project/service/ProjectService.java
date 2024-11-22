@@ -51,4 +51,6 @@ public interface ProjectService {
     BoostedInfoResponse getBoostedInfo(Long projectId);
 
     Page<NewProjectResponse> searchProject(String keyword, int page);
+
+    void updateProgressToCorporateFunding(Project project);
 }

@@ -248,4 +248,10 @@ public class ProjectServiceImpl implements ProjectService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void updateProgressToCorporateFunding(Project project) {
+        project.setProgress(Progress.CORPORATE_FUNDING);
+        projectRepository.save(project);
+    }
 }
