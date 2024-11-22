@@ -1,7 +1,6 @@
 package boosters.fundboost.proposal.service;
 
 import boosters.fundboost.company.domain.Company;
-import boosters.fundboost.company.service.CompanyService;
 import boosters.fundboost.global.common.domain.enums.UploadType;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.uploader.S3UploaderService;
@@ -30,7 +29,6 @@ import java.util.Optional;
 public class ProposalServiceImpl implements ProposalService {
     private static final int PAGE_SIZE = 4;
     private final ProposalRepository proposalRepository;
-    private final CompanyService companyService;
     private final S3UploaderService s3UploaderService;
     private final UserService userService;
 
