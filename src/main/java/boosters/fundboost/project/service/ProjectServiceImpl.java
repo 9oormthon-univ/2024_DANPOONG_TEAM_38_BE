@@ -19,6 +19,7 @@ import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.exception.ProjectException;
@@ -100,10 +101,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<NewProjectResponse> getUserProjects() {
+    public List<MyProjectResponse> getUserProjects() {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
-        return projectConverter.toNewProjectsResponse(projects);
+        return projectConverter.toMyProjectsResponse(projects);
     }
 
     @Override
