@@ -44,6 +44,8 @@ public enum ErrorStatus implements BaseErrorCode {
     COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPANY400", "기업을 찾을 수 없습니다."),
     // PROPOSAL
     PROPOSAL_NOT_FOUND(HttpStatus.NOT_FOUND, "PROPOSAL400", "제안서를 찾을 수 없습니다."),
+    PROPOSAL_INVALID_COMPANY(HttpStatus.FORBIDDEN, "PROPOSAL401", "제안서의 주체는 기업이어야 합니다."),
+    PROPOSAL_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "PROPOSAL402", "제안하는 대상을 찾을 수 없습니다."),
     // FILE
     FILE_CONVERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE400", "파일링크를 JSON형식으로 변환하는 중 에러가 발생했습니다."),
     // SEARCH

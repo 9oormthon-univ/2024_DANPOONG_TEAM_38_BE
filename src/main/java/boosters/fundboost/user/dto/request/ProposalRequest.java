@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class ProposalRequest {
     @NotNull(message = "기업아이디는 필수입니다.")
-    private long companyId;
+    private long userId;
     @NotNull(message = "제목은 필수입니다.")
     private String title;
     @NotNull(message = "내용은 필수입니다.")
