@@ -162,7 +162,7 @@ public class ProjectConverter {
                 .image(project.getImages().get(0).getImageUrl())
                 .targetAmount(AmountUtil.formatAmount(project.getTargetAmount()))
                 .progressRate(progressRate)
-                .achievedAmount(achievedAmount)
+                .achievedAmount(AmountUtil.formatAmount(achievedAmount))
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
     }

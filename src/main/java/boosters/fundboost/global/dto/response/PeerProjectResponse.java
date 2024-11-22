@@ -16,7 +16,7 @@ public class PeerProjectResponse {
     private String introduction;
     private String image;
     private double progressRate;
-    private long achievedAmount;
+    private String achievedAmount;
     private String progressPeriod;
     private String targetAmount;
 }
