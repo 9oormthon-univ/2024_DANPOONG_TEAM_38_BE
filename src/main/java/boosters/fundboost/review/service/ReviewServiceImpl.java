@@ -90,11 +90,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
     @Override
     public List<MyReviewResponseDto> getMyReviews(Long userId) {
+        if (userId == null) {
+            throw new ReviewException(ErrorStatus.REVIEW_UNAUTHORIZED_ACCESS);
+        }
         List<Review> myReviews = reviewRepository.findByUserId(userId);
         return myReviews.stream()
                 .map(reviewConverter::toMyReviewResponseDto)
                 .collect(Collectors.toList());
     }
-
 }
 
