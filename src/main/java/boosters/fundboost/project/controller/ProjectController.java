@@ -9,6 +9,7 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.NewProjectRequest;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.service.ProjectService;
@@ -101,7 +102,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
     })
     @GetMapping("/user-projects")
-    public BaseResponse<List<NewProjectResponse>> getUserProjects() {
+    public BaseResponse<List<MyProjectResponse>> getUserProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getUserProjects());
     }
 

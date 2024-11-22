@@ -6,6 +6,7 @@ import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.ProjectImage;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
@@ -13,6 +14,8 @@ import boosters.fundboost.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,5 +141,29 @@ public class ProjectConverter {
                     .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
                     .build();
         });
+    }
+    public List<MyProjectResponse> toMyProjectsResponse(List<Project> projects) {
+        return projects.stream()
+                .map(this::toMyProjectResponse)
+                .collect(Collectors.toList());
+    }
+
+    public MyProjectResponse toMyProjectResponse(Project project) {
+        String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
+        LocalDate now = LocalDate.now();
+        boolean isFunding = now.isBefore(project.getEndDate()) && now.isAfter(project.getStartDate());
+        Integer daysRemaining = now.isBefore(project.getEndDate()) ?
+                Period.between(now, project.getEndDate()).getDays() : null;
+
+        return MyProjectResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .image(imageUrl)
+                .category(project.getCategory().getName())
+                .progressStatus(project.getProgress().name())
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .isFunding(isFunding)
+                .daysRemaining(daysRemaining)
+                .build();
     }
 }
