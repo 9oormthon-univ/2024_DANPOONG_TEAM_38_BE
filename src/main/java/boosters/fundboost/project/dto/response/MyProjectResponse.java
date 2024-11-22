@@ -10,15 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NewProjectResponse {
+public class MyProjectResponse {
     private Long id;
     private String mainTitle;
     private String image;
     private String category;
-    private String region;
-    private double progressRate;
-    private String achievedAmount;
+    private String progressStatus;
     private String progressPeriod;
-    private boolean isCorporateFunding;
-    private String userName;
+    private boolean isFunding;
+    private Integer daysRemaining;
 }

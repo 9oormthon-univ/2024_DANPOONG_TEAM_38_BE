@@ -5,9 +5,11 @@ import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.global.security.handler.annotation.AuthUser;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.BoostProjectRequest;
 import boosters.fundboost.project.service.ProjectService;
 import boosters.fundboost.user.domain.User;
+import boosters.fundboost.user.domain.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,6 +39,12 @@ public class BoostController {
         Project project = projectService.findById(request.projectId());
 
         boostService.boostCompany(user, project, request.amount());
+
+        if (user.getUserType() == UserType.COMPANY) {
+            project.setProgress(Progress.CORPORATE_FUNDING);
+            projectService.updateProgressToCorporateFunding(project);
+        }
+
         return BaseResponse.of(SuccessStatus._NO_CONTENT, null);
     }
 }

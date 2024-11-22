@@ -1,4 +1,4 @@
-package boosters.fundboost.project.dto.response;
+package boosters.fundboost.global.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,15 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NewProjectResponse {
+public class PeerProjectResponse {
     private Long id;
     private String mainTitle;
+    private String introduction;
     private String image;
-    private String category;
-    private String region;
     private double progressRate;
     private String achievedAmount;
     private String progressPeriod;
-    private boolean isCorporateFunding;
-    private String userName;
+    private String targetAmount;
 }

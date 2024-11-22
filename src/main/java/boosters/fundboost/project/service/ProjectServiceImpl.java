@@ -9,6 +9,7 @@ import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewRecord;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.common.domain.enums.GetType;
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
@@ -19,6 +20,7 @@ import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.exception.ProjectException;
@@ -38,7 +40,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,57 +57,72 @@ public class ProjectServiceImpl implements ProjectService {
     private final S3Uploader s3Uploader;
     private final ProjectConverter projectConverter;
 
-    @Override
-    public void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image) {
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
-        String imageUrl = s3Uploader.upload(image, "project-images");
-        Project project = projectConverter.toEntity(request, imageUrl, user);
+    public void registerBasicInfo(ProjectBasicInfoRequest request, List<MultipartFile> images) {
+        List<String> imageUrls = images.stream()
+                .map(image -> s3Uploader.upload(image, "project-images"))
+                .collect(Collectors.toList());
+
+        Project project = projectConverter.toEntity(request, imageUrls, getCurrentUser());
         projectRepository.save(project);
     }
 
     @Override
     public List<NewProjectResponse> getNewProjects() {
         List<Project> projects = projectRepository.findNewProjects();
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getProjectsByCategory(ProjectCategory category) {
         List<Project> projects = projectRepository.findByCategory(category);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getProjectsByRegion(Region region) {
         List<Project> projects = projectRepository.findByRegion(region);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getPopularProjects() {
         List<Project> projects = projectRepository.findPopularProjects();
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getCorporateFundingProjects() {
         var projects = projectRepository.findByProgress(Progress.CORPORATE_FUNDING);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public Page<NewProjectResponse> getAllProjects(Pageable pageable) {
         Page<Project> projects = projectRepository.findAllProjects(pageable);
-        return projects.map(projectConverter::toNewProjectResponse);
+        return toNewProjectPageResponse(projects);
     }
 
     @Override
-    public List<NewProjectResponse> getUserProjects() {
+    public List<MyProjectResponse> getUserProjects() {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
-        return projectConverter.toNewProjectsResponse(projects);
+        return projectConverter.toMyProjectsResponse(projects);
+    }
+
+    public Page<PeerProjectResponse> getUserProjects(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+
+        Page<Project> projects = projectRepository.findAllByUser_Id(userId, pageable);
+
+        Map<Project, Long> projectInfo = projects.getContent().stream()
+                .collect(Collectors.toMap(
+                        project -> project,
+                        project -> boostRepository.sumAmountByProject_Id(project.getId())
+                ));
+
+        List<PeerProjectResponse> peerProjects = ProjectConverter.toPeerProjectListResponse(projectInfo);
+
+        return new PageImpl<>(peerProjects, pageable, projects.getTotalElements());
     }
 
     @Override
@@ -113,18 +132,27 @@ public class ProjectServiceImpl implements ProjectService {
         return projectConverter.toProjectDetailResponse(project);
     }
 
+    private User getCurrentUser() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+    }
+
     @Override
-    public void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image) {
+    public void updateProject(Long projectId, ProjectBasicInfoRequest request, List<MultipartFile> images) {
         Long userId = SecurityUtils.getCurrentUserId();
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+
         if (!project.getUser().getId().equals(userId)) {
             throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
         }
-        String imageUrl = (image != null && !image.isEmpty())
-                ? s3Uploader.upload(image, "project-images")
-                : null;
-        projectConverter.updateEntity(project, request, imageUrl);
+
+        List<String> imageUrls = images.stream()
+                .map(img -> s3Uploader.upload(img, "project-images"))
+                .collect(Collectors.toList());
+
+        projectConverter.updateEntity(project, request, imageUrls);
         projectRepository.save(project);
     }
 
@@ -181,12 +209,49 @@ public class ProjectServiceImpl implements ProjectService {
         Pageable pageable = PageRequest.of(page, SEARCH_PAGE_SIZE);
 
         Page<Project> projects = projectRepository.searchProject(keyword, pageable);
-        return projectConverter.toNewProjectPageResponse(projects);
+        return toNewProjectPageResponse(projects);
     }
 
     @Override
     public Project findById(long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+    }
+
+    private Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
+        Map<Long, Long> projectInfo = calculateAchievementAmounts(projects.getContent());
+
+        return projects.map(project -> {
+            Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
+            return projectConverter.toNewProjectResponse(project, achievementAmount);
+        });
+    }
+
+    private List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
+        Map<Long, Long> projectInfo = calculateAchievementAmounts(projects);
+        return convertProjectsToResponses(projects, projectInfo);
+    }
+
+    private Map<Long, Long> calculateAchievementAmounts(List<Project> projects) {
+        return projects.stream()
+                .collect(Collectors.toMap(
+                        Project::getId,
+                        project -> boostRepository.sumAmountByProject_Id(project.getId())
+                ));
+    }
+
+    private List<NewProjectResponse> convertProjectsToResponses(List<Project> projects, Map<Long, Long> projectInfo) {
+        return projects.stream()
+                .map(project -> {
+                    Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
+                    return projectConverter.toNewProjectResponse(project, achievementAmount);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateProgressToCorporateFunding(Project project) {
+        project.setProgress(Progress.CORPORATE_FUNDING);
+        projectRepository.save(project);
     }
 }

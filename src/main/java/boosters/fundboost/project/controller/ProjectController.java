@@ -9,6 +9,7 @@ import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.NewProjectRequest;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import boosters.fundboost.project.service.ProjectService;
@@ -36,7 +37,7 @@ public class ProjectController {
     @PostMapping(consumes = {"multipart/form-data"})
     @Operation(summary = "프로젝트 생성 API", description = "프로젝트 기본 정보, 펀딩계획, 프로젝트 계획, 창작자 정보를 등록합니다")
     public BaseResponse<String> createProject(@ModelAttribute ProjectBasicInfoRequest request) {
-        projectService.registerBasicInfo(request, request.getImage());
+        projectService.registerBasicInfo(request, request.getImages());
         return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 생성되었습니다.");
     }
 
@@ -101,7 +102,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
     })
     @GetMapping("/user-projects")
-    public BaseResponse<List<NewProjectResponse>> getUserProjects() {
+    public BaseResponse<List<MyProjectResponse>> getUserProjects() {
         return BaseResponse.onSuccess(SuccessStatus._OK, projectService.getUserProjects());
     }
 
@@ -118,11 +119,13 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
     })
+
     @PutMapping(value = "/{projectId}", consumes = {"multipart/form-data"})
     public BaseResponse<String> updateProject(
             @PathVariable Long projectId,
             @ModelAttribute ProjectBasicInfoRequest request) {
-        projectService.updateProject(projectId, request, request.getImage());
+
+        projectService.updateProject(projectId, request, request.getImages());
         return BaseResponse.onSuccess(SuccessStatus._OK, "프로젝트가 성공적으로 수정되었습니다.");
     }
 
