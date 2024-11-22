@@ -8,6 +8,7 @@ import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public interface ProjectService {
 
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
 
-    List<NewProjectResponse> getUserProjects();
+    List<MyProjectResponse> getUserProjects();
 
     Page<PeerProjectResponse> getUserProjects(Long userId, int page);
 
