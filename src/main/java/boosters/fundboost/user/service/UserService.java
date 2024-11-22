@@ -1,5 +1,6 @@
 package boosters.fundboost.user.service;
 
+import boosters.fundboost.project.dto.response.BoostedProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.request.ProfileEditRequest;
@@ -16,7 +17,7 @@ public interface UserService {
 
     Page<ProjectPreviewResponse> getFavProjects(Long userId, int page);
 
-    Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page);
+    Page<BoostedProjectResponse> getBoostedProjects(Long userId, int page);
 
     void editProfile(User user, ProfileEditRequest request);
 

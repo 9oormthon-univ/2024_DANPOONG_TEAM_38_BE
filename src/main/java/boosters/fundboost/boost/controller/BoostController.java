@@ -7,7 +7,7 @@ import boosters.fundboost.global.security.handler.annotation.AuthUser;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.BoostProjectRequest;
-import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
+import boosters.fundboost.project.dto.response.BoostedProjectResponse;
 import boosters.fundboost.project.service.ProjectService;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.domain.enums.UserType;
@@ -60,7 +60,7 @@ public class BoostController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     @GetMapping("/{userId}/boosts")
-    public BaseResponse<Page<ProjectPreviewResponse>> getPeerBoostedProjects(
+    public BaseResponse<Page<BoostedProjectResponse>> getPeerBoostedProjects(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @PathVariable(name = "userId") Long userId) {
         return BaseResponse.onSuccess(SuccessStatus._OK, userService.getBoostedProjects(userId, page));

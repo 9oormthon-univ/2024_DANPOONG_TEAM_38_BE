@@ -8,6 +8,7 @@ import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.ProjectImage;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
+import boosters.fundboost.project.dto.response.BoostedProjectResponse;
 import boosters.fundboost.project.dto.response.MyProjectResponse;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectDetailResponse;
@@ -136,6 +137,7 @@ public class ProjectConverter {
                     .build();
         });
     }
+
     public List<MyProjectResponse> toMyProjectsResponse(List<Project> projects) {
         return projects.stream()
                 .map(this::toMyProjectResponse)
@@ -168,6 +170,22 @@ public class ProjectConverter {
                     return ProjectConverter.toPeerProjectResponse(project, achievementAmount);
                 })
                 .toList();
+    }
+
+    public static BoostedProjectResponse toBoostedProjectResponse(Project project, Long boostedAmount) {
+        String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
+        return BoostedProjectResponse.builder()
+                .image(imageUrl)
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .introduction(project.getIntroduction())
+                .image(imageUrl)
+                .progressRate(CalculatorUtil.calculateProgressRate(boostedAmount, project.getTargetAmount())) // 기여도
+                .boostedAmount(AmountUtil.formatAmount(boostedAmount)) // 이 사람이 후원한 금액을 조회
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
+                .build();
+
     }
 
     private static PeerProjectResponse toPeerProjectResponse(Project project, Long achievedAmount) {

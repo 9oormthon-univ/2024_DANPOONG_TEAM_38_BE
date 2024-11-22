@@ -3,6 +3,7 @@ package boosters.fundboost.user.controller;
 import boosters.fundboost.global.response.BaseResponse;
 import boosters.fundboost.global.response.code.status.SuccessStatus;
 import boosters.fundboost.global.security.handler.annotation.AuthUser;
+import boosters.fundboost.project.dto.response.BoostedProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
@@ -50,7 +51,7 @@ public class UserController {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     @GetMapping("/boosts")
-    public BaseResponse<Page<ProjectPreviewResponse>> getBoostedProjects(
+    public BaseResponse<Page<BoostedProjectResponse>> getBoostedProjects(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @Parameter(name = "user", hidden = true) @AuthUser User user) {
         return BaseResponse.onSuccess(SuccessStatus._OK, userService.getBoostedProjects(user.getId(), page));
