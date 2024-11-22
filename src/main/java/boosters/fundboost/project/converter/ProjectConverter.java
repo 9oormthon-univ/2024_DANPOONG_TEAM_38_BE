@@ -1,5 +1,7 @@
 package boosters.fundboost.project.converter;
 
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
+import boosters.fundboost.global.utils.AmountUtil;
 import boosters.fundboost.global.utils.CalculatorUtil;
 import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -138,5 +141,29 @@ public class ProjectConverter {
                     .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
                     .build();
         });
+    }
+
+    public static List<PeerProjectResponse> toPeerProjectListResponse(Page<Project> projects, Map<Project, Long> projectInfo) {
+        return projects.getContent().stream()
+                .map(project -> {
+                    Long achievementAmount = projectInfo.get(project);
+                    return ProjectConverter.toPeerProjectResponse(project, achievementAmount);
+                })
+                .toList();
+    }
+
+    private static PeerProjectResponse toPeerProjectResponse(Project project, Long achievedAmount) {
+        double progressRate = CalculatorUtil.calculateProgressRate(achievedAmount, project.getTargetAmount());
+
+        return PeerProjectResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .introduction(project.getIntroduction())
+                .image(project.getImages().get(0).getImageUrl())
+                .targetAmount(AmountUtil.formatAmount(project.getTargetAmount()))
+                .progressRate(progressRate)
+                .achievedAmount(achievedAmount)
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .build();
     }
 }
