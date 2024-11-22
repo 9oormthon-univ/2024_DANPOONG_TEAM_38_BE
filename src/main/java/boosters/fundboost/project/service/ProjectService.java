@@ -16,10 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProjectService {
-    void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image);
+    void registerBasicInfo(ProjectBasicInfoRequest request, List<MultipartFile> images);
 
-    void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image);
-
+    void updateProject(Long projectId, ProjectBasicInfoRequest request, List<MultipartFile> images);
     void deleteProject(Long projectId);
 
     List<NewProjectResponse> getNewProjects();

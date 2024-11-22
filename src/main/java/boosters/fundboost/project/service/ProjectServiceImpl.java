@@ -39,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,13 +54,12 @@ public class ProjectServiceImpl implements ProjectService {
     private final S3Uploader s3Uploader;
     private final ProjectConverter projectConverter;
 
-    @Override
-    public void registerBasicInfo(ProjectBasicInfoRequest request, MultipartFile image) {
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
-        String imageUrl = s3Uploader.upload(image, "project-images");
-        Project project = projectConverter.toEntity(request, imageUrl, user);
+    public void registerBasicInfo(ProjectBasicInfoRequest request, List<MultipartFile> images) {
+        List<String> imageUrls = images.stream()
+                .map(image -> s3Uploader.upload(image, "project-images"))
+                .collect(Collectors.toList());
+
+        Project project = projectConverter.toEntity(request, imageUrls, getCurrentUser());
         projectRepository.save(project);
     }
 
@@ -112,19 +112,27 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+    private User getCurrentUser() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+    }
 
     @Override
-    public void updateProject(Long projectId, ProjectBasicInfoRequest request, MultipartFile image) {
+    public void updateProject(Long projectId, ProjectBasicInfoRequest request, List<MultipartFile> images) {
         Long userId = SecurityUtils.getCurrentUserId();
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+
         if (!project.getUser().getId().equals(userId)) {
             throw new ProjectException(ErrorStatus.UNAUTHORIZED_ACCESS);
         }
-        String imageUrl = (image != null && !image.isEmpty())
-                ? s3Uploader.upload(image, "project-images")
-                : null;
-        projectConverter.updateEntity(project, request, imageUrl);
+
+        List<String> imageUrls = images.stream()
+                .map(img -> s3Uploader.upload(img, "project-images"))
+                .collect(Collectors.toList());
+
+        projectConverter.updateEntity(project, request, imageUrls);
         projectRepository.save(project);
     }
 
