@@ -7,6 +7,8 @@ import boosters.fundboost.user.dto.response.PeerMyPageResponse;
 import boosters.fundboost.user.dto.response.UserMyPageResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.Optional;
+
 public interface UserService {
     User getUser(String userEmail);
 
@@ -19,4 +21,6 @@ public interface UserService {
     void editProfile(User user, ProfileEditRequest request);
 
     PeerMyPageResponse getPeerProfile(Long peerId, Long userId);
+
+    Optional<User> findById(Long userId);
 }
