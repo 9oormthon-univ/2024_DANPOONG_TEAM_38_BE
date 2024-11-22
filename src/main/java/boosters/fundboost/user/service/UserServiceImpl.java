@@ -9,6 +9,7 @@ import boosters.fundboost.global.utils.MyPageValidator;
 import boosters.fundboost.like.service.LikeService;
 import boosters.fundboost.project.converter.ProjectConverter;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.dto.response.BoostedProjectResponse;
 import boosters.fundboost.project.dto.response.ProjectPreviewResponse;
 import boosters.fundboost.user.converter.MyPageConverter;
 import boosters.fundboost.user.domain.User;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -57,11 +59,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProjectPreviewResponse> getBoostedProjects(Long userId, int page) {
+    public Page<BoostedProjectResponse> getBoostedProjects(Long userId, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Project> projects = boostService.getBoostedProjects(userId, pageable);
+        Map<Long, Long> boostedAmounts = boostService.getBoostedAmounts(
+                projects.stream().map(Project::getId).toList()
+        );
 
-        return ProjectConverter.toProjectPreviewResponse(projects);
+        return projects.map(project -> {
+            Long boostedAmount = boostedAmounts.getOrDefault(project.getId(), 0L);
+            return ProjectConverter.toBoostedProjectResponse(project, boostedAmount);
+        });
     }
 
     @Override
