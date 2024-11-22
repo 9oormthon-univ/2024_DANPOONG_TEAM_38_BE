@@ -9,6 +9,7 @@ import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewRecord;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.common.domain.enums.GetType;
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
@@ -38,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -106,12 +108,28 @@ public class ProjectServiceImpl implements ProjectService {
         return projectConverter.toNewProjectsResponse(projects);
     }
 
+    public Page<PeerProjectResponse> getUserProjects(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+
+        Page<Project> projects = projectRepository.findByUserId(userId, pageable);
+        Map<Project, Long> projectInfo = projects.getContent().stream()
+                .collect(Collectors.toMap(
+                        project -> project,
+                        project -> boostRepository.sumAmountByProject_Id(project.getId())
+                ));
+
+        List<PeerProjectResponse> peerProjects = ProjectConverter.toPeerProjectListResponse(projects, projectInfo);
+
+        return new PageImpl<>(peerProjects, pageable, projects.getTotalElements());
+    }
+
     @Override
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+
     private User getCurrentUser() {
         Long userId = SecurityUtils.getCurrentUserId();
         return userRepository.findById(userId)
