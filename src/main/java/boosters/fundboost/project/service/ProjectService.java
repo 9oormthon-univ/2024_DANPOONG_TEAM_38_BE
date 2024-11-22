@@ -3,6 +3,7 @@ package boosters.fundboost.project.service;
 import boosters.fundboost.boost.dto.BoostedInfoResponse;
 import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
 import boosters.fundboost.project.domain.Project;
 import boosters.fundboost.project.domain.enums.ProjectCategory;
 import boosters.fundboost.project.domain.enums.Region;
@@ -20,6 +21,7 @@ public interface ProjectService {
     void registerBasicInfo(ProjectBasicInfoRequest request, List<MultipartFile> images);
 
     void updateProject(Long projectId, ProjectBasicInfoRequest request, List<MultipartFile> images);
+
     void deleteProject(Long projectId);
 
     List<NewProjectResponse> getNewProjects();
@@ -35,6 +37,8 @@ public interface ProjectService {
     Page<NewProjectResponse> getAllProjects(Pageable pageable);
 
     List<MyProjectResponse> getUserProjects();
+
+    Page<PeerProjectResponse> getUserProjects(Long userId, int page);
 
     ProjectDetailResponse getProjectDetail(Long projectId);
 

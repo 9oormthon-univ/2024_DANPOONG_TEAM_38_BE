@@ -9,6 +9,7 @@ import boosters.fundboost.company.dto.request.CompanyRankingPreviewRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewRecord;
 import boosters.fundboost.company.dto.response.CompanyRankingPreviewResponse;
 import boosters.fundboost.global.common.domain.enums.GetType;
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.util.SecurityUtils;
 import boosters.fundboost.global.uploader.S3Uploader;
@@ -39,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -67,37 +69,37 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<NewProjectResponse> getNewProjects() {
         List<Project> projects = projectRepository.findNewProjects();
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getProjectsByCategory(ProjectCategory category) {
         List<Project> projects = projectRepository.findByCategory(category);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getProjectsByRegion(Region region) {
         List<Project> projects = projectRepository.findByRegion(region);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getPopularProjects() {
         List<Project> projects = projectRepository.findPopularProjects();
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public List<NewProjectResponse> getCorporateFundingProjects() {
         var projects = projectRepository.findByProgress(Progress.CORPORATE_FUNDING);
-        return projectConverter.toNewProjectsResponse(projects);
+        return toNewProjectsResponse(projects);
     }
 
     @Override
     public Page<NewProjectResponse> getAllProjects(Pageable pageable) {
         Page<Project> projects = projectRepository.findAllProjects(pageable);
-        return projects.map(projectConverter::toNewProjectResponse);
+        return toNewProjectPageResponse(projects);
     }
 
     @Override
@@ -107,12 +109,29 @@ public class ProjectServiceImpl implements ProjectService {
         return projectConverter.toMyProjectsResponse(projects);
     }
 
+    public Page<PeerProjectResponse> getUserProjects(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+
+        Page<Project> projects = projectRepository.findAllByUser_Id(userId, pageable);
+
+        Map<Project, Long> projectInfo = projects.getContent().stream()
+                .collect(Collectors.toMap(
+                        project -> project,
+                        project -> boostRepository.sumAmountByProject_Id(project.getId())
+                ));
+
+        List<PeerProjectResponse> peerProjects = ProjectConverter.toPeerProjectListResponse(projectInfo);
+
+        return new PageImpl<>(peerProjects, pageable, projects.getTotalElements());
+    }
+
     @Override
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
         return projectConverter.toProjectDetailResponse(project);
     }
+
     private User getCurrentUser() {
         Long userId = SecurityUtils.getCurrentUserId();
         return userRepository.findById(userId)
@@ -190,12 +209,43 @@ public class ProjectServiceImpl implements ProjectService {
         Pageable pageable = PageRequest.of(page, SEARCH_PAGE_SIZE);
 
         Page<Project> projects = projectRepository.searchProject(keyword, pageable);
-        return projectConverter.toNewProjectPageResponse(projects);
+        return toNewProjectPageResponse(projects);
     }
 
     @Override
     public Project findById(long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
+    }
+
+    private Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
+        Map<Long, Long> projectInfo = calculateAchievementAmounts(projects.getContent());
+
+        return projects.map(project -> {
+            Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
+            return projectConverter.toNewProjectResponse(project, achievementAmount);
+        });
+    }
+
+    private List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
+        Map<Long, Long> projectInfo = calculateAchievementAmounts(projects);
+        return convertProjectsToResponses(projects, projectInfo);
+    }
+
+    private Map<Long, Long> calculateAchievementAmounts(List<Project> projects) {
+        return projects.stream()
+                .collect(Collectors.toMap(
+                        Project::getId,
+                        project -> boostRepository.sumAmountByProject_Id(project.getId())
+                ));
+    }
+
+    private List<NewProjectResponse> convertProjectsToResponses(List<Project> projects, Map<Long, Long> projectInfo) {
+        return projects.stream()
+                .map(project -> {
+                    Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
+                    return projectConverter.toNewProjectResponse(project, achievementAmount);
+                })
+                .collect(Collectors.toList());
     }
 }

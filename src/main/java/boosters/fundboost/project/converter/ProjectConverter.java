@@ -1,5 +1,7 @@
 package boosters.fundboost.project.converter;
 
+import boosters.fundboost.global.dto.response.PeerProjectResponse;
+import boosters.fundboost.global.utils.AmountUtil;
 import boosters.fundboost.global.utils.CalculatorUtil;
 import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -52,14 +55,9 @@ public class ProjectConverter {
         return project;
     }
 
-    public List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
-        return projects.stream()
-                .map(this::toNewProjectResponse)
-                .collect(Collectors.toList());
-    }
 
-    public NewProjectResponse toNewProjectResponse(Project project) {
-        double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
+    public NewProjectResponse toNewProjectResponse(Project project, long achievedAmount) {
+        double progressRate = CalculatorUtil.calculateProgressRate(achievedAmount, project.getTargetAmount());
 
         String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
 
@@ -70,15 +68,11 @@ public class ProjectConverter {
                 .category(project.getCategory().getName())
                 .region(project.getRegion().getName())
                 .progressRate(progressRate)
-                .achievedAmount(project.getAchievedAmount())
+                .achievedAmount(AmountUtil.formatAmount(achievedAmount))
                 .isCorporateFunding(project.getProgress() == Progress.CORPORATE_FUNDING)
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .userName(project.getUser().getName())
                 .build();
-    }
-
-    public Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
-        return projects.map(this::toNewProjectResponse);
     }
 
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
@@ -164,6 +158,30 @@ public class ProjectConverter {
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .isFunding(isFunding)
                 .daysRemaining(daysRemaining)
+                .build();
+    }
+
+    public static List<PeerProjectResponse> toPeerProjectListResponse(Map<Project, Long> projectInfo) {
+        return projectInfo.keySet().stream()
+                .map(project -> {
+                    Long achievementAmount = projectInfo.get(project);
+                    return ProjectConverter.toPeerProjectResponse(project, achievementAmount);
+                })
+                .toList();
+    }
+
+    private static PeerProjectResponse toPeerProjectResponse(Project project, Long achievedAmount) {
+        double progressRate = CalculatorUtil.calculateProgressRate(achievedAmount, project.getTargetAmount());
+
+        return PeerProjectResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .introduction(project.getIntroduction())
+                .image(project.getImages().get(0).getImageUrl())
+                .targetAmount(AmountUtil.formatAmount(project.getTargetAmount()))
+                .progressRate(progressRate)
+                .achievedAmount(AmountUtil.formatAmount(achievedAmount))
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
     }
 }
