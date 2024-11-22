@@ -52,14 +52,9 @@ public class ProjectConverter {
         return project;
     }
 
-    public List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
-        return projects.stream()
-                .map(this::toNewProjectResponse)
-                .collect(Collectors.toList());
-    }
 
-    public NewProjectResponse toNewProjectResponse(Project project) {
-        double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
+    public NewProjectResponse toNewProjectResponse(Project project, long achievedAmount) {
+        double progressRate = CalculatorUtil.calculateProgressRate(achievedAmount, project.getTargetAmount());
 
         String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
 
@@ -70,15 +65,11 @@ public class ProjectConverter {
                 .category(project.getCategory().getName())
                 .region(project.getRegion().getName())
                 .progressRate(progressRate)
-                .achievedAmount(project.getAchievedAmount())
+                .achievedAmount(AmountUtil.formatAmount(achievedAmount))
                 .isCorporateFunding(project.getProgress() == Progress.CORPORATE_FUNDING)
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .userName(project.getUser().getName())
                 .build();
-    }
-
-    public Page<NewProjectResponse> toNewProjectPageResponse(Page<Project> projects) {
-        return projects.map(this::toNewProjectResponse);
     }
 
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
@@ -143,8 +134,8 @@ public class ProjectConverter {
         });
     }
 
-    public static List<PeerProjectResponse> toPeerProjectListResponse(Page<Project> projects, Map<Project, Long> projectInfo) {
-        return projects.getContent().stream()
+    public static List<PeerProjectResponse> toPeerProjectListResponse(Map<Project, Long> projectInfo) {
+        return projectInfo.keySet().stream()
                 .map(project -> {
                     Long achievementAmount = projectInfo.get(project);
                     return ProjectConverter.toPeerProjectResponse(project, achievementAmount);

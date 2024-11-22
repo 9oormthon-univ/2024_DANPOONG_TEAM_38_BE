@@ -40,8 +40,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, CustomP
     @Query("SELECT p FROM Project p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Project> findByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT p FROM Project p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
-    Page<Project> findByUserId(@Param("userId") Long userId, Pageable pageable);
+    Page<Project> findAllByUser_Id(@Param("userId") Long userId, Pageable pageable);
 
     long countByCreatedAtAfter(LocalDateTime date);
 
