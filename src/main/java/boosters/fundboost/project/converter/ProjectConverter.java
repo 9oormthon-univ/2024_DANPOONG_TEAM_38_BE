@@ -3,6 +3,7 @@ package boosters.fundboost.project.converter;
 import boosters.fundboost.global.utils.CalculatorUtil;
 import boosters.fundboost.global.utils.PeriodUtil;
 import boosters.fundboost.project.domain.Project;
+import boosters.fundboost.project.domain.ProjectImage;
 import boosters.fundboost.project.domain.enums.Progress;
 import boosters.fundboost.project.dto.request.ProjectBasicInfoRequest;
 import boosters.fundboost.project.dto.response.NewProjectResponse;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 @Component
 public class ProjectConverter {
 
-    public Project toEntity(ProjectBasicInfoRequest request, String imageUrl, User user) {
-        return Project.builder()
+    public Project toEntity(ProjectBasicInfoRequest request, List<String> imageUrls, User user) {
+        Project project = Project.builder()
                 .mainTitle(request.getMainTitle())
                 .subTitle(request.getSubTitle())
-                .image(imageUrl)
                 .category(request.getCategory())
                 .region(request.getRegion())
+                .user(user)
                 .account(request.getAccount())
                 .budgetDescription(request.getBudgetDescription())
                 .scheduleDescription(request.getScheduleDescription())
@@ -34,8 +35,18 @@ public class ProjectConverter {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .summary(request.getSummary())
-                .user(user)
                 .build();
+
+        List<ProjectImage> projectImages = imageUrls.stream()
+                .map(url -> ProjectImage.builder()
+                        .imageUrl(url)
+                        .project(project)
+                        .build())
+                .collect(Collectors.toList());
+
+        project.getImages().addAll(projectImages);
+
+        return project;
     }
 
     public List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
@@ -47,10 +58,12 @@ public class ProjectConverter {
     public NewProjectResponse toNewProjectResponse(Project project) {
         double progressRate = CalculatorUtil.calculateProgressRate(project.getAchievedAmount(), project.getTargetAmount());
 
+        String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
+
         return NewProjectResponse.builder()
                 .id(project.getId())
                 .mainTitle(project.getMainTitle())
-                .image(project.getImage())
+                .image(imageUrl)
                 .category(project.getCategory().getName())
                 .region(project.getRegion().getName())
                 .progressRate(progressRate)
@@ -66,11 +79,15 @@ public class ProjectConverter {
     }
 
     public ProjectDetailResponse toProjectDetailResponse(Project project) {
+        List<String> imageUrls = project.getImages().stream()
+                .map(ProjectImage::getImageUrl)
+                .collect(Collectors.toList());
+
         return ProjectDetailResponse.builder()
                 .id(project.getId())
                 .mainTitle(project.getMainTitle())
                 .subTitle(project.getSubTitle())
-                .image(project.getImage())
+                .images(imageUrls) // 다중 이미지 지원
                 .introduction(project.getIntroduction())
                 .budgetDescription(project.getBudgetDescription())
                 .scheduleDescription(project.getScheduleDescription())
@@ -79,11 +96,21 @@ public class ProjectConverter {
                 .build();
     }
 
-    public void updateEntity(Project project, ProjectBasicInfoRequest request, String imageUrl) {
+    public void updateEntity(Project project, ProjectBasicInfoRequest request, List<String> imageUrls) {
+        project.getImages().clear();
+
+        List<ProjectImage> projectImages = imageUrls.stream()
+                .map(url -> ProjectImage.builder()
+                        .imageUrl(url)
+                        .project(project)
+                        .build())
+                .collect(Collectors.toList());
+
+        project.getImages().addAll(projectImages);
+
         project.updateBasicInfo(
                 request.getMainTitle(),
                 request.getSubTitle(),
-                imageUrl,
                 request.getCategory(),
                 request.getRegion(),
                 request.getAccount(),
@@ -99,14 +126,17 @@ public class ProjectConverter {
     }
 
     public static Page<ProjectPreviewResponse> toProjectPreviewResponse(Page<Project> projects) {
-        return projects.map(project -> ProjectPreviewResponse.builder()
-                .image(project.getImage())
-                .userName(project.getUser().getName())
-                .mainTitle(project.getMainTitle())
-                .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
-                .progress(project.getProgress().name())
-                .category(project.getCategory().getName())
-                .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
-                .build());
+        return projects.map(project -> {
+            String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
+            return ProjectPreviewResponse.builder()
+                    .image(imageUrl)
+                    .userName(project.getUser().getName())
+                    .mainTitle(project.getMainTitle())
+                    .period(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                    .progress(project.getProgress().name())
+                    .category(project.getCategory().getName())
+                    .daysLeft(CalculatorUtil.calculateDaysLeft(project.getStartDate(), project.getEndDate()))
+                    .build();
+        });
     }
 }

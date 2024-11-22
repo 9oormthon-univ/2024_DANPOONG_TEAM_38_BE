@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -43,7 +44,9 @@ public class Project extends BaseEntity {
     private String mainTitle;
     private String subTitle;
     private String introduction;
-    private String image;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectImage> images = new ArrayList<>();
+
     private String budgetDescription;
     private String scheduleDescription;
     private String teamDescription;
@@ -86,13 +89,12 @@ public class Project extends BaseEntity {
     }
 
     @Builder
-    public Project(String mainTitle, String subTitle, String image, ProjectCategory category, Region region, User user,
+    public Project(String mainTitle, String subTitle, List<ProjectImage> images, ProjectCategory category, Region region, User user,
                    String account, String budgetDescription, String scheduleDescription, String teamDescription,
                    Long targetAmount, String introduction, Progress progress, LocalDate startDate, LocalDate endDate, String summary) {
         this.mainTitle = mainTitle;
         this.subTitle = subTitle;
-        this.image = image;
-        this.category = category;
+        this.images = images != null ? images : new ArrayList<>();         this.category = category;
         this.region = region;
         this.user = user;
         this.account = account;
@@ -107,13 +109,10 @@ public class Project extends BaseEntity {
         this.summary = summary;
     }
 
-    public void updateBasicInfo(String mainTitle, String subTitle, String image, ProjectCategory category, Region region,
+    public void updateBasicInfo(String mainTitle, String subTitle, ProjectCategory category, Region region,
                                 String account, String budgetDescription, String scheduleDescription,
-                                String teamDescription, Long targetAmount, String introduction, LocalDate startDate,
-                                LocalDate endDate, String summary) {
-        if (image != null && !image.isEmpty()) {
-            this.image = image;
-        }
+                                String teamDescription, Long targetAmount, String introduction,
+                                LocalDate startDate, LocalDate endDate, String summary) {
         this.mainTitle = mainTitle;
         this.subTitle = subTitle;
         this.category = category;
