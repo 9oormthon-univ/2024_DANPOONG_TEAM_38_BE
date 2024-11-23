@@ -98,5 +98,17 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(reviewConverter::toMyReviewResponseDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<MyReviewResponseDto> getMyReviewsByProjectId(Long userId, Long projectId) {
+        if (userId == null) {
+            throw new ReviewException(ErrorStatus.REVIEW_UNAUTHORIZED_ACCESS);
+        }
+
+        List<Review> myReviews = reviewRepository.findByUserIdAndProjectId(userId, projectId);
+
+        return myReviews.stream()
+                .map(reviewConverter::toMyReviewResponseDto)
+                .collect(Collectors.toList());
+    }
 }
 

@@ -68,13 +68,13 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
     @GetMapping("/my")
-    @Operation(summary = "내가 작성한 리뷰 조회 API", description = "로그인한 사용자가 작성한 리뷰를 조회합니다.")
+    @Operation(summary = "내가 작성한 리뷰 조회 API", description = "특정 프로젝트에 대해 로그인한 사용자가 작성한 리뷰를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ResponseEntity<List<MyReviewResponseDto>> getMyReviews() {
+    public ResponseEntity<List<MyReviewResponseDto>> getMyReviewsByProjectId(@PathVariable Long projectId) {
         Long userId = SecurityUtils.getCurrentUserId();
-        List<MyReviewResponseDto> myReviews = reviewService.getMyReviews(userId);
+        List<MyReviewResponseDto> myReviews = reviewService.getMyReviewsByProjectId(userId, projectId);
         return ResponseEntity.ok(myReviews);
     }
 }

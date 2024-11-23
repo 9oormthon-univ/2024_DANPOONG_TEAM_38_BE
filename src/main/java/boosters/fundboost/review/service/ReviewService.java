@@ -14,4 +14,5 @@ public interface ReviewService {
 
     List<ReviewResponseDto> getReviewsByProjectIdAndType(Long projectId, ReviewType reviewType);
     List<MyReviewResponseDto> getMyReviews(Long userId);
+    List<MyReviewResponseDto> getMyReviewsByProjectId(Long userId, Long projectId);
 }
