@@ -11,10 +11,10 @@ public class SecurityUtils {
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-            throw new IllegalStateException("로그인된 사용자가 아닙니다.");
+            throw new UserException(ErrorStatus.UNAUTHORIZED_USER);
         }
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return userDetails.getUserId(); // User ID 반환
+        return userDetails.getUserId();
     }
 
     public static String getAuthUserEmail(Authentication authentication) {

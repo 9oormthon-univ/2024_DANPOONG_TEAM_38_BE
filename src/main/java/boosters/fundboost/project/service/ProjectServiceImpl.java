@@ -55,14 +55,13 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
     private final BoostRepository boostRepository;
     private final S3Uploader s3Uploader;
-    private final ProjectConverter projectConverter;
 
     public void registerBasicInfo(ProjectBasicInfoRequest request, List<MultipartFile> images) {
         List<String> imageUrls = images.stream()
                 .map(image -> s3Uploader.upload(image, "project-images"))
                 .collect(Collectors.toList());
 
-        Project project = projectConverter.toEntity(request, imageUrls, getCurrentUser());
+        Project project = ProjectConverter.toEntity(request, imageUrls, getCurrentUser());
         projectRepository.save(project);
     }
 
@@ -106,7 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
     public List<MyProjectResponse> getUserProjects() {
         Long userId = SecurityUtils.getCurrentUserId();
         List<Project> projects = projectRepository.findByUserId(userId);
-        return projectConverter.toMyProjectsResponse(projects);
+        return ProjectConverter.toMyProjectsResponse(projects);
     }
 
     public Page<PeerProjectResponse> getUserProjects(Long userId, int page) {
@@ -129,7 +128,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorStatus.PROJECT_NOT_FOUND));
-        return projectConverter.toProjectDetailResponse(project);
+        return ProjectConverter.toProjectDetailResponse(project);
     }
 
     private User getCurrentUser() {
@@ -152,7 +151,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .map(img -> s3Uploader.upload(img, "project-images"))
                 .collect(Collectors.toList());
 
-        projectConverter.updateEntity(project, request, imageUrls);
+        ProjectConverter.updateEntity(project, request, imageUrls);
         projectRepository.save(project);
     }
 
@@ -223,10 +222,15 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projects.map(project -> {
             Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
-            return projectConverter.toNewProjectResponse(project, achievementAmount);
+            return ProjectConverter.toNewProjectResponse(project, achievementAmount);
         });
     }
 
+    @Transactional
+    public void updateProgressToCorporateFunding(Project project) {
+        project.setProgress(Progress.CORPORATE_FUNDING);
+        projectRepository.save(project);
+    }
     private List<NewProjectResponse> toNewProjectsResponse(List<Project> projects) {
         Map<Long, Long> projectInfo = calculateAchievementAmounts(projects);
         return convertProjectsToResponses(projects, projectInfo);
@@ -244,14 +248,8 @@ public class ProjectServiceImpl implements ProjectService {
         return projects.stream()
                 .map(project -> {
                     Long achievementAmount = projectInfo.getOrDefault(project.getId(), 0L);
-                    return projectConverter.toNewProjectResponse(project, achievementAmount);
+                    return ProjectConverter.toNewProjectResponse(project, achievementAmount);
                 })
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void updateProgressToCorporateFunding(Project project) {
-        project.setProgress(Progress.CORPORATE_FUNDING);
-        projectRepository.save(project);
     }
 }

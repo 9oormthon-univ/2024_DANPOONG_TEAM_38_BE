@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Component
 public class ProjectConverter {
 
-    public Project toEntity(ProjectBasicInfoRequest request, List<String> imageUrls, User user) {
+    public static Project toEntity(ProjectBasicInfoRequest request, List<String> imageUrls, User user) {
         Project project = Project.builder()
                 .mainTitle(request.getMainTitle())
                 .subTitle(request.getSubTitle())
@@ -49,7 +49,7 @@ public class ProjectConverter {
                         .imageUrl(url)
                         .project(project)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         project.getImages().addAll(projectImages);
 
@@ -57,7 +57,7 @@ public class ProjectConverter {
     }
 
 
-    public NewProjectResponse toNewProjectResponse(Project project, long achievedAmount) {
+    public static NewProjectResponse toNewProjectResponse(Project project, long achievedAmount) {
         double progressRate = CalculatorUtil.calculateProgressRate(achievedAmount, project.getTargetAmount());
 
         String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
@@ -76,7 +76,7 @@ public class ProjectConverter {
                 .build();
     }
 
-    public ProjectDetailResponse toProjectDetailResponse(Project project) {
+    public static ProjectDetailResponse toProjectDetailResponse(Project project) {
         List<String> imageUrls = project.getImages().stream()
                 .map(ProjectImage::getImageUrl)
                 .collect(Collectors.toList());
@@ -94,7 +94,7 @@ public class ProjectConverter {
                 .build();
     }
 
-    public void updateEntity(Project project, ProjectBasicInfoRequest request, List<String> imageUrls) {
+    public static void updateEntity(Project project, ProjectBasicInfoRequest request, List<String> imageUrls) {
         project.getImages().clear();
 
         List<ProjectImage> projectImages = imageUrls.stream()
@@ -102,7 +102,7 @@ public class ProjectConverter {
                         .imageUrl(url)
                         .project(project)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         project.getImages().addAll(projectImages);
 
@@ -138,29 +138,10 @@ public class ProjectConverter {
         });
     }
 
-    public List<MyProjectResponse> toMyProjectsResponse(List<Project> projects) {
+    public static List<MyProjectResponse> toMyProjectsResponse(List<Project> projects) {
         return projects.stream()
-                .map(this::toMyProjectResponse)
+                .map(ProjectConverter::toMyProjectResponse)
                 .collect(Collectors.toList());
-    }
-
-    public MyProjectResponse toMyProjectResponse(Project project) {
-        String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
-        LocalDate now = LocalDate.now();
-        boolean isFunding = now.isBefore(project.getEndDate()) && now.isAfter(project.getStartDate());
-        Integer daysRemaining = now.isBefore(project.getEndDate()) ?
-                Period.between(now, project.getEndDate()).getDays() : null;
-
-        return MyProjectResponse.builder()
-                .id(project.getId())
-                .mainTitle(project.getMainTitle())
-                .image(imageUrl)
-                .category(project.getCategory().getName())
-                .progressStatus(project.getProgress().name())
-                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
-                .isFunding(isFunding)
-                .daysRemaining(daysRemaining)
-                .build();
     }
 
     public static List<PeerProjectResponse> toPeerProjectListResponse(Map<Project, Long> projectInfo) {
@@ -202,4 +183,24 @@ public class ProjectConverter {
                 .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
                 .build();
     }
+
+    private static MyProjectResponse toMyProjectResponse(Project project) {
+        String imageUrl = project.getImages().isEmpty() ? null : project.getImages().get(0).getImageUrl();
+        LocalDate now = LocalDate.now();
+        boolean isFunding = now.isBefore(project.getEndDate()) && now.isAfter(project.getStartDate());
+        Integer daysRemaining = now.isBefore(project.getEndDate()) ?
+                Period.between(now, project.getEndDate()).getDays() : null;
+
+        return MyProjectResponse.builder()
+                .id(project.getId())
+                .mainTitle(project.getMainTitle())
+                .image(imageUrl)
+                .category(project.getCategory().getName())
+                .progressStatus(project.getProgress().name())
+                .progressPeriod(PeriodUtil.localDateToPeriodFormat(project.getStartDate(), project.getEndDate()))
+                .isFunding(isFunding)
+                .daysRemaining(daysRemaining)
+                .build();
+    }
+
 }
