@@ -50,6 +50,9 @@ public enum ErrorStatus implements BaseErrorCode {
     FILE_CONVERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE400", "파일링크를 JSON형식으로 변환하는 중 에러가 발생했습니다."),
     // SEARCH
     KEYWORD_LENGTH_ERROR(HttpStatus.BAD_REQUEST, "SEARCH400", "검색어는 2글자 이상이어야 합니다."),
+    //USER
+    INVALID_EMAIL(HttpStatus.NOT_FOUND,"USER400","잘못된 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.NOT_FOUND,"USER401","잘못된 비밀번호입니다."),
     ;
 
     private final HttpStatus httpStatus;
