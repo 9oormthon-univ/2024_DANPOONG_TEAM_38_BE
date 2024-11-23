@@ -8,6 +8,7 @@ import boosters.fundboost.user.dto.response.UserMyPageResponse;
 public class MyPageConverter {
     public static UserMyPageResponse toUserMyPageResponse(User user, long followingCount, long followerCount) {
         return UserMyPageResponse.builder()
+                .userId(user.getId())
                 .name(user.getName())
                 .image(user.getImage())
                 .link(user.getLink())
