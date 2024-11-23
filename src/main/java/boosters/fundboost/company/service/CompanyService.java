@@ -7,11 +7,11 @@ import boosters.fundboost.company.dto.request.CompanyLoginRequest;
 import boosters.fundboost.company.dto.request.CompanyRankingRequest;
 import boosters.fundboost.company.dto.request.CompanyRegisterRequest;
 import boosters.fundboost.company.dto.response.CompanyRankingResponse;
-import boosters.fundboost.company.exception.CompanyException;
 import boosters.fundboost.company.repository.CompanyRepository;
 import boosters.fundboost.company.auth.email.service.EmailService;
 import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.jwt.JwtTokenProvider;
+import boosters.fundboost.user.auth.exception.AuthException;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
@@ -79,13 +79,13 @@ public class CompanyService {
 
     public String[] loginCompany(CompanyLoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 이메일입니다."));
+                .orElseThrow(() -> new AuthException(ErrorStatus.INVALID_EMAIL));
 
         Company company = companyRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalArgumentException("회사 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new AuthException(ErrorStatus.COMPANY_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), company.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new AuthException(ErrorStatus.INVALID_PASSWORD);
         }
 
         String accessToken = jwtTokenProvider.createToken(user.getEmail());
@@ -106,7 +106,7 @@ public class CompanyService {
         String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
 
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+            throw new AuthException(ErrorStatus.INVALID_TOKEN);
         }
 
         return jwtTokenProvider.createToken(email);
@@ -123,10 +123,5 @@ public class CompanyService {
         return companies.entrySet().stream()
                 .map(entry -> CompanyRankingConverter.toCompanyRankingResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
-    }
-
-    public Company findById(Long companyId) {
-        return companyRepository.findById(companyId)
-                .orElseThrow(() -> new CompanyException(ErrorStatus.COMPANY_NOT_FOUND));
     }
 }
