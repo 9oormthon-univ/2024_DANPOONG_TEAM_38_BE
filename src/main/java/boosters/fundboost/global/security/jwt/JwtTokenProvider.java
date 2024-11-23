@@ -94,12 +94,15 @@ public class JwtTokenProvider {
             throw new TokenException(ErrorStatus.INVALID_TOKEN);
         }
     }
-    public Long getId(String token) {
-        return getClaims(token).getBody().get("id", Long.class);
+
+    public String getId(String token) {
+        return getClaims(token).getBody().get("id", String.class);
     }
+
     private Jws<Claims> getClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
     }
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
