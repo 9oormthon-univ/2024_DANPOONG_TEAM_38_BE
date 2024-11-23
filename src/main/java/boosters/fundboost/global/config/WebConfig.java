@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://fb-server.shop","http://localhost:3000")
+                .allowedOrigins("https://2024-danpoong-team-38-fe.vercel.app", "https://fb-server.shop","http://localhost:3000")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)
