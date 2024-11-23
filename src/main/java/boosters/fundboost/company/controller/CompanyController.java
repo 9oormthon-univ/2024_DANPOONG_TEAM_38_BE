@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,9 @@ import java.util.List;
 @RequestMapping("/api/companies")
 public class CompanyController {
     private final CompanyService companyService;
+
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenDuration;
 
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
@@ -38,14 +42,13 @@ public class CompanyController {
     @PostMapping("/login")
     public ResponseEntity<CompanyLoginResponse> loginCompany(@RequestBody CompanyLoginRequest request) {
         String[] tokens = companyService.loginCompany(request);
+        String accessToken = tokens[0];
+        String refreshToken = tokens[1];
 
-        if (tokens == null || tokens.length < 2) {
-            throw new IllegalArgumentException("로그인 처리 중 오류가 발생했습니다. 토큰 생성 실패");
-        }
+        companyService.saveRefreshToken(request.getEmail(), refreshToken, refreshTokenDuration);
 
-        return ResponseEntity.ok(new CompanyLoginResponse(tokens[0], tokens[1])); // Access, Refresh Token 반환
+        return ResponseEntity.ok(new CompanyLoginResponse(accessToken, refreshToken));
     }
-
 
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenResponse> refreshAccessToken(
