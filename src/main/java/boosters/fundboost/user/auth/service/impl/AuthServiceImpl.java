@@ -1,8 +1,6 @@
 package boosters.fundboost.user.auth.service.impl;
 
-import boosters.fundboost.global.redis.exception.TokenException;
 import boosters.fundboost.global.redis.service.RefreshTokenService;
-import boosters.fundboost.global.response.code.status.ErrorStatus;
 import boosters.fundboost.global.security.jwt.JwtTokenProvider;
 import boosters.fundboost.global.security.provider.KakaoAuthProvider;
 import boosters.fundboost.user.auth.converter.AuthConverter;
@@ -14,6 +12,7 @@ import boosters.fundboost.user.auth.service.AuthService;
 import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenDuration;
 
     @Override
     public OAuthResponse kakaoLogin(String code) {
@@ -40,40 +41,31 @@ public class AuthServiceImpl implements AuthService {
             isLogin.set(true);
             return userRepository.save(AuthConverter.toUser(kakaoProfile));
         });
-
-        String accessToken = jwtTokenProvider.createToken(currentUser.getId().toString());
-        String refreshToken = saveRefreshToken(currentUser.getId());
+        String accessToken = jwtTokenProvider.createToken(currentUser.getEmail());
+        String refreshToken = saveRefreshToken(currentUser.getEmail());
 
         return AuthConverter.toOAuthResponse(accessToken, refreshToken, isLogin.get(), currentUser);
     }
 
     @Override
-    public void kakaoLogout(Long userId) {
-        refreshTokenService.deleteToken(userId);
+    public void kakaoLogout(User user) {
+        refreshTokenService.deleteToken(user.getEmail());
     }
 
     @Override
     @Transactional
     public TokenRefreshResponse refresh(String refreshToken) {
-        validateToken(refreshToken);
-        Long id = jwtTokenProvider.getId(refreshToken);
+        String email = jwtTokenProvider.getId(refreshToken);
 
-        String newAccessToken = jwtTokenProvider.createToken(id.toString());
-        String newRefreshToken = saveRefreshToken(id);
+        String newAccessToken = jwtTokenProvider.createToken(email);
+        String newRefreshToken = saveRefreshToken(email);
 
         return AuthConverter.toTokenRefreshResponse(newAccessToken, newRefreshToken);
     }
 
-    private void validateToken(String refreshToken) {
-        jwtTokenProvider.validateToken(refreshToken);
-
-        if (!refreshTokenService.isEqualsToken(refreshToken))
-            throw new TokenException(ErrorStatus.NOT_EQUAL_TOKEN);
-    }
-
-    private String saveRefreshToken(Long userId) {
-        String refreshToken = jwtTokenProvider.createRefreshToken(userId.toString());
-        refreshTokenService.saveToken(refreshToken);
+    private String saveRefreshToken(String email) {
+        String refreshToken = jwtTokenProvider.createRefreshToken(email);
+        refreshTokenService.saveRefreshToken(email, refreshToken, refreshTokenDuration);
 
         return refreshToken;
     }
