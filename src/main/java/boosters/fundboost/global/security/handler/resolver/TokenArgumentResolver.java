@@ -29,7 +29,7 @@ public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
 
-        String refreshToken = webRequest.getHeader("Authorization");
+        String refreshToken = webRequest.getHeader("Authorization").substring(7);
         jwtTokenProvider.validateToken(refreshToken);
         return refreshToken;
     }

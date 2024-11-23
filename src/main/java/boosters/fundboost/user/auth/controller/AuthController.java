@@ -46,7 +46,7 @@ public class AuthController {
     })
     @DeleteMapping("/kakao/logout")
     public BaseResponse<Long> kakaoLogout(@Parameter(name = "user", hidden = true) @AuthUser User user) {
-        authService.kakaoLogout(user.getId());
+        authService.kakaoLogout(user);
         return BaseResponse.onSuccess(SuccessStatus._OK, user.getId());
     }
 
@@ -57,7 +57,7 @@ public class AuthController {
             @ApiResponse(responseCode = "TOKEN402", description = "INVALID_TOKEN, 유효하지 않은 토큰입니다."),
     })
     @PostMapping("/kakao/refresh")
-    public BaseResponse<TokenRefreshResponse> refresh(@AuthToken String refreshToken) {
+    public BaseResponse<TokenRefreshResponse> refresh(@Parameter(name = "refreshToken", hidden = true) @AuthToken String refreshToken) {
         return BaseResponse.onSuccess(SuccessStatus._OK, authService.refresh(refreshToken));
     }
 }
