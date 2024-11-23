@@ -16,6 +16,7 @@ import boosters.fundboost.user.domain.User;
 import boosters.fundboost.user.domain.enums.Tag;
 import boosters.fundboost.user.domain.enums.UserType;
 import boosters.fundboost.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class CompanyService {
     private final RedisTemplate<String, String> redisTemplate;
     private final EmailService emailService;
 
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenDuration;
+
     public CompanyService(UserRepository userRepository, CompanyRepository companyRepository,
                           PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider,
                           RedisTemplate<String, String> redisTemplate, EmailService emailService) {
@@ -46,67 +50,68 @@ public class CompanyService {
     }
 
     public void registerCompany(CompanyRegisterRequest request) {
-        // EmailService를 통해 이메일 인증 여부 확인
-//    if (!emailService.isEmailVerified(request.getEmail())) {
-//        throw new IllegalArgumentException("이메일 인증이 필요합니다.");
-//    }
+        if (!emailService.isEmailVerified(request.getEmail())) {
+            throw new CompanyException(ErrorStatus.UNAUTHORIZED_USER);
+        }
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new CompanyException(ErrorStatus.USER_NOT_FOUND);
         }
 
         if (companyRepository.findByBusinessNumber(request.getBusinessNumber()).isPresent()) {
-            throw new IllegalArgumentException("이미 등록된 사업자 번호입니다.");
+            throw new CompanyException(ErrorStatus.COMPANY_NOT_FOUND);
         }
 
-        // User 생성 및 저장
         User user = User.builder()
                 .email(request.getEmail())
-                .userType(UserType.COMPANY) // Enum 값 설정
+                .userType(UserType.COMPANY)
                 .tag(Tag.SEASSAK_INVESTOR)
                 .build();
         userRepository.save(user);
 
-        // Company 생성 및 저장
         Company company = Company.builder()
                 .user(user)
                 .businessNumber(request.getBusinessNumber())
-                .password(passwordEncoder.encode(request.getPassword())) // 비밀번호 암호화 후 설정
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         companyRepository.save(company);
     }
 
-
     public String[] loginCompany(CompanyLoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 이메일입니다."));
+                .orElseThrow(() -> new CompanyException(ErrorStatus.USER_NOT_FOUND));
 
         Company company = companyRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalArgumentException("회사 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CompanyException(ErrorStatus.COMPANY_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), company.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new CompanyException(ErrorStatus.UNAUTHORIZED_USER);
         }
 
         String accessToken = jwtTokenProvider.createToken(user.getEmail());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
-        redisTemplate.opsForValue().set(
-                user.getEmail(),
-                refreshToken,
-                jwtTokenProvider.getRefreshTokenValidity(),
-                TimeUnit.MILLISECONDS
-        );
+        saveRefreshToken(user.getEmail(), refreshToken, refreshTokenDuration);
+
         return new String[]{accessToken, refreshToken};
     }
 
+    public void saveRefreshToken(String email, String refreshToken, long refreshTokenValidity) {
+        String redisKey = "refresh_token:" + email;
+        redisTemplate.opsForValue().set(
+                redisKey,
+                refreshToken,
+                refreshTokenValidity,
+                TimeUnit.MILLISECONDS
+        );
+    }
 
     public String refreshToken(String email, String refreshToken) {
         String redisKey = "refresh_token:" + email;
         String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
 
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+            throw new CompanyException(ErrorStatus.UNAUTHORIZED_USER);
         }
 
         return jwtTokenProvider.createToken(email);
