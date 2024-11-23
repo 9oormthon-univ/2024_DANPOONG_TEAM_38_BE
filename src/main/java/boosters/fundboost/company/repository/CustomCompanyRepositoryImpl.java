@@ -23,7 +23,6 @@ import static boosters.fundboost.company.domain.QCompany.company;
 
 @RequiredArgsConstructor
 public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
-    private static final long LIMIT_SIZE = 3;
     private static final int WEEK = 7;
     private static final int MONTH = 1;
     private static final int YEAR = 3;
@@ -70,7 +69,6 @@ public class CustomCompanyRepositoryImpl implements CustomCompanyRepository {
                 .where(boost.createdAt.between(startDate, endDate))
                 .groupBy(company.id)
                 .orderBy(numberExpression.desc())
-                .limit(LIMIT_SIZE)
                 .fetch();
     }
 
