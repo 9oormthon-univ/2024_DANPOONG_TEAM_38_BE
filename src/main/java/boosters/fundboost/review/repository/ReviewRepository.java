@@ -2,6 +2,7 @@ package boosters.fundboost.review.repository;
 
 import boosters.fundboost.review.domain.Review;
 import boosters.fundboost.review.domain.enums.ReviewType;
+import boosters.fundboost.review.dto.response.MyReviewResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +16,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Object[]> findReviewsWithAmountByProjectIdAndType(@Param("projectId") Long projectId,
                                                            @Param("reviewType") ReviewType reviewType);
     List<Review> findByUserId(Long userId);
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId AND r.project.id = :projectId")
+    List<Review> findByUserIdAndProjectId(@Param("userId") Long userId, @Param("projectId") Long projectId);
 }
